@@ -476,15 +476,6 @@ BSC:
     en: 'Built-in System Interface - Trunk'
     fr: 'Boitier de Servitude - Coffre'
 
-CDPL:
-  bus:
-    - 'LS.CAR'
-  id:
-    LS: 0x0A
-  name:
-    en: 'Rain and Light Sensor'
-    fr: 'Capteur de Pluie et Luminosite'
-
 TNB:
   bus:
     - 'LIN.LIN'
