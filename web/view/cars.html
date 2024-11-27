@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBMUXEv Viewer: Cars</title>
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet" href="css/base.css">
+    <script src="./js/netutils.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <span class="logotext">DBMUXEv Viewer</span>
+        </div>
+        <div class="searchbar">
+            <div class="search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="value" name="" placeholder="Start typing to search for cars" id="">
+            </div>
+            <!-- <div class="searchresults"> -->
+        </div>
+        </div>
+        <div class="dbmuxevselection">
+            <a class="headerLink" href="/">
+                <span class="material-symbols-outlined">architecture</span>
+                Architecture
+            </a>
+            <a class="headerLink" href="/nodes">
+                <span class="material-symbols-outlined">hub</span>
+                Nodes
+            </a>
+            <a class="headerLink selected" href="/cars">
+                <span class="material-symbols-outlined">directions_car</span>
+                Cars
+            </a>
+            <a class="headerLink" href="">
+                <span class="material-symbols-outlined">settings_input_component</span>
+                Busses
+            </a>
+        </div>
+    </header>
+    <main>
+        <h1><noscript>This page depends on javascript! Without it you are stuck and cant search!</noscript></h1>
+        <!-- <div class="mainCenter">
+            <div style="display: block; text-align: center;">
+                <h1>Use the search to find cars</h1>
+                <h5>I dont know what to put here! If you got any ideas I would be thankful!</h5>
+            </div>
+        </div> -->
+        <h5 class="renderingDetails">Loading cars ...</h5>
+        <div class="searchList">
+            <div class="searchResult">
+                <span class="searchResultId">AA</span>
+                <div class="searchResultInfo">
+                    <span class="searchResultName"></span>
+                    <span class="searchResultCodes">AB, AC, AD, AE</span>
+                    <span class="searchResultCodesName">BB, CC</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="selectedInfo">
+
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="./js/cars.js"></script>
+</body>
+
+</html>

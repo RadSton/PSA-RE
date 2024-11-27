@@ -1,0 +1,6 @@
+{
+    "ROOT_DBMUXEV": "../",
+    "SAVE_DEBBUGING_DBMUXEV_FILE": false,
+    "STATIC_WEB_ROOT": "view",
+    "WEB_PORT": 3000
+}

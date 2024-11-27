@@ -1,0 +1,23 @@
+{
+  "name": "psa-re-web",
+  "version": "0.0.1",
+  "description": "A web viewer/editor for PSA-Reverse-Engineering",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prototux/PSA-RE.git"
+  },
+  "author": "OpenLeo",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/prototux/PSA-RE/issues"
+  },
+  "homepage": "https://github.com/prototux/PSA-RE#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "yawn-yaml": "^2.3.0"
+  }
+}
