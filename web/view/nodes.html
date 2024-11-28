@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DBMUXEv Viewer: Buses</title>
+    <title>DBMUXEv Viewer: Nodes</title>
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -21,7 +21,7 @@
         <div class="searchbar">
             <div class="search">
                 <span class="material-symbols-outlined">search</span>
-                <input type="value" name="" placeholder="Start typing to search for architectures" id="">
+                <input type="value" name="" disabled placeholder="Choose an architecture before searching" id="">
             </div>
         </div>
         </div>
@@ -30,7 +30,7 @@
                 <span class="material-symbols-outlined">architecture</span>
                 Architecture
             </a>
-            <a class="headerLink" href="/nodes">
+            <a class="headerLink selected" href="/nodes">
                 <span class="material-symbols-outlined">hub</span>
                 Nodes
             </a>
@@ -38,7 +38,7 @@
                 <span class="material-symbols-outlined">directions_car</span>
                 Cars
             </a>
-            <a class="headerLink selected" href="/buses">
+            <a class="headerLink" href="/buses">
                 <span class="material-symbols-outlined">settings_input_component</span>
                 Buses
             </a>
@@ -46,16 +46,27 @@
     </header>
     <main>
         <h1><noscript>This page depends on javascript! Without it you are stuck and cant search!</noscript></h1>
-        <h5 class="renderingDetails">Loading architectures ...</h5>
+        <h5 class="renderingDetails">Loading nodes ...</h5>
         <div class="searchList">
+            <h5 style="text-align: center;">Please select architecture from which you want to view the nodes first:</h5>
+            <div class="searchResult">
+                <span class="searchResultId"></span>
+                <div class="searchResultInfo">
+                    <span class="searchResultName"></span>
+                    <span class="searchResultCodes">AB, AC, AD, AE</span>
+                    <span class="searchResultCodesName">BB, CC</span>
+                </div>
+            </div>
         </div>
 
-        <div class="selectedInfo"></div>
+        <div class="selectedInfo">
+
+        </div>
     </main>
     <footer>
 
     </footer>
-    <script src="./js/buses.js"></script>
+    <script src="./js/nodes.js"></script>
 </body>
 
 </html>

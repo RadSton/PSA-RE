@@ -219,6 +219,7 @@ break {
     width: 100%;
     text-align: center;
     font-size: 25pt;
+    padding-bottom: 3vh;
 }
 
 .selType {
@@ -238,14 +239,14 @@ break {
 }
 
 .selectedInfo>.field {
-    font-size: 13pt;
+    font-size: 18pt;
     color: #ffffffaa;
 }
 
 .selectedInfo>.fieldTitle {
     padding-top: 13pt;
     padding-bottom: 4pt;
-    font-size: 20pt;
+    font-size: 27pt;
 }
 
 .selectedInfo>.field>.fieldValue {
@@ -262,6 +263,11 @@ break {
 
 .field[data-depth="3"] {
     padding-left: 6vw;
+}
+
+
+.field[data-depth="4"] {
+    padding-left: 8vw;
 }
 
 .fieldLink {

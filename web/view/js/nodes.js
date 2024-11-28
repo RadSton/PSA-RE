@@ -46,6 +46,7 @@ const renderArchSelector = (nodesList) => {
 
     renderingDetails.innerHTML = `Select Architecture ${languageSwitcher()}`;
     searchList.style.display = "block";
+    selectedInfo.style.display = "none";
 
     let result = "";
 
@@ -63,7 +64,8 @@ const renderNodeSelector = (nodeContainer, nodeArch) => {
     console.log("renderNodeSelector", nodeContainer, nodeArch)
 
     searchList.style.display = "block";
-    console.log(languageSwitcher());
+    selectedInfo.style.display = "none";
+    
     renderingDetails.innerHTML = `Select a node from ${nodeArch} (${Object.keys(nodeContainer).length}) ${languageSwitcher()}`;
 
     if (nodeContainer.error) {
@@ -89,7 +91,7 @@ const renderNodeSelector = (nodeContainer, nodeArch) => {
     searchList.innerHTML = result;
 }
 
-
+ // TODO: make work with alt names for example: RT3
 const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
     const node = nodeContainer[nodeId];
     console.log("renderNodeInfo", nodeArch, nodeId, node)
@@ -102,8 +104,7 @@ const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
         selectedInfo.innerHTML = `
         <span class="selTitle">The node <span class="selType">${nodeId}</span> wasnt found in  <span class="selType">${nodeArch}</span></span>
         <span class="selTitle"><a class="headerLink selected" href="/nodes">Reset filters</a></span>
-
-    `;
+        `;
         return;
     }
 

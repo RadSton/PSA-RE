@@ -2,8 +2,8 @@
 // Maybe add networks to search
 // I could copy the language handling from here to the others
 module.exports = (app = require("express")(), configuration, dbmuxev) => {
-    app.get("/api/v1/architectures", (req, res) => {
-        res.send(dbmuxev.architectures);
+    app.get("/api/v1/buses", (req, res) => {
+        res.send(dbmuxev.busses);
     });
 
     app.get("/api/v1/architecture/:id", (req, res) => {

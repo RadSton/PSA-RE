@@ -26,6 +26,14 @@ app.get("/cars", (req, res) => {
     res.sendFile(__dirname + "/view/cars.html");
 })  
 
+app.get("/nodes", (req, res) => {
+    res.sendFile(__dirname + "/view/nodes.html");
+})  
+
+app.get("/architecture*", (req, res) => {
+    res.sendFile(__dirname + "/view/architectures.html");
+})  
+
 app.get("/*", (req, res) => {
     res.sendFile(__dirname + "/view/index.html");
 })  
