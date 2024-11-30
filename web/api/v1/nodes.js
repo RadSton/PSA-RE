@@ -1,5 +1,5 @@
 
-module.exports = (app = require("express")(), configuration, dbmuxev) => {
+module.exports = (app = require("express")(), configuration, dbmuxev = require("../../debugging_dbmuxev.json")) => {
     app.get("/api/v1/nodes", (req, res) => {
         res.send(Object.keys(dbmuxev.nodes));
     });
@@ -45,7 +45,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
                     }
         }
 
-        res.send({ error: "No node was found"});
+        res.send({ error: "No node was found" });
 
     })
 
@@ -93,6 +93,66 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
         }
 
         res.send(results);
+
+    })
+
+    app.post("/api/v1/node/:id/findMessages", (req, res) => {
+        if (!req.body.nodeName) {
+            res.status(400).send({ error: "You need to declare nodeName in the body of the request!" })
+            return;
+        }
+
+        const arch = req.params.id;
+        const nodeName = req.body.nodeName;
+
+        if (!dbmuxev.nodes[arch]) {
+            res.status(400).send({ error: "Could not find arch called \"" + arch + "\"!" });
+            return;
+        }
+
+        if (!dbmuxev.nodes[arch][nodeName]) {
+            res.status(400).send({ error: "Could not find node called \"" + nodeName + "\"!" });
+            return;
+        }
+
+        if (!dbmuxev.buses[arch]) {
+            res.status(400).send({ error: "There is no buses documentation for \"" + arch + "\" (yet)!" });
+            return;
+        }
+
+        let namesToSearch = [];
+
+        namesToSearch.push(nodeName);
+        const fullNode = dbmuxev.nodes[arch][nodeName];
+        if (fullNode.alt)
+            for (const name of fullNode.alt)
+                namesToSearch.push(name);
+
+        const buses = dbmuxev.buses[arch];
+
+        let response = { sending: {}, recieving: {} };
+
+        for (const [bus, messages] of Object.entries(buses)) {
+            response.sending[bus] = {};
+            response.recieving[bus] = {};
+            for (const [messageId, message] of Object.entries(messages)) {
+                if (message.senders)
+                    for (const sender of message.senders)
+                        if (namesToSearch.includes(sender))
+                            response.sending[bus][messageId] = message;
+                if (message.receivers)
+                    for (const receiver of message.receivers)
+                        if (namesToSearch.includes(receiver))
+                            response.recieving[bus][messageId] = message;
+            }
+
+            if (Object.keys(response.sending[bus]).length == 0)
+                response.sending[bus] = undefined;
+            if (Object.keys(response.recieving[bus]).length == 0)
+                response.recieving[bus] = undefined;
+        }
+
+        res.send(response);
 
     })
 }

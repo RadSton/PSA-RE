@@ -113,6 +113,8 @@ const renderArchInfo = (arch, fullArchitectureName) => {
     if (arch.comment)
         addField("Comment: ", arch.comment[defaultLang]);
 
+    addField("Nodes: ", `<a href="/nodes?arch=${fullArchitectureName}" class="fieldLink">${architectureName}.${architectureVariant}</a>`)
+
     if (arch.protocols)
         selectedInfo.innerHTML += `<span class="fieldTitle">Protocols:</span>`;
 

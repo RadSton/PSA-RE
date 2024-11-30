@@ -121,7 +121,7 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
         return;
     }
 
-
+    renderingDetails.innerHTML = `Showing node ${nodeId} from ${nodeArch} ${languageSwitcher()}`;
 
     selectedInfo.innerHTML = `
         <span class="selTitle">nodes/<span class="selType">${nodeArch}</span>.yml -> <span class="selType">${nodeId}</span></span>
@@ -159,7 +159,48 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
     for (const [key, id] of Object.entries(node.id))
         addTreeField(" -> " + key + ": ", toHexString(id, 2), 1);
 
-    renderingDetails.innerHTML = `Showing node ${nodeId} from ${nodeArch} ${languageSwitcher()}`;
+    const interactingMessages = await requestJSONWithBody("POST", "/api/v1/node/" + nodeArch + "/findMessages", {
+        nodeName: nodeId
+    });
+
+    if (!interactingMessages || interactingMessages.error)
+        return;
+
+    const renderInteractingMessagePart = (type = "sending", text) => {
+        if (Object.keys(interactingMessages[type]).length > 0)
+            selectedInfo.innerHTML += `<span class="fieldTitle">${text} Messages:</span>`;
+    
+        for (const [fullBusName, messages] of Object.entries(interactingMessages[type])) {
+            const splitBusName = fullBusName.split(".");
+            const network = splitBusName[0];
+            const bus = splitBusName[1];
+    
+            addTreeField(" -> Network: ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${bus}">${fullBusName}</a>`, 1);
+    
+            for (const [messageId, message] of Object.entries(messages)) {
+                addTreeField(" -> Message: ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${bus}&message=0x${messageId}">0x${messageId}</a>`, 2);
+    
+                if (message.name)
+                    addTreeField(" -> Name: ", `${message.name}`, 3);
+                if (message.comment)
+                    addTreeField(" -> Comment: ", `${message.comment[defaultLang]}`, 3);
+                if (message.length)
+                    addTreeField(" -> Length: ", `${message.length}`, 3);
+                if (message.alt_names)
+                    addTreeField(" -> Alternative Names: ", `${message.alt_names.join(", ")}`, 3);
+                if (message.signals)
+                    addTreeField(" -> Signals: ", `${Object.keys(message.signals).join(", ")}`, 3);
+    
+                addTreeField("---------------", "", 2);
+            }
+    
+            addTreeField("<br />", "", 1);
+        }
+    }
+
+    renderInteractingMessagePart("sending", "Sending");
+    renderInteractingMessagePart("recieving", "Recieving");
+
 }
 
 /**
