@@ -209,7 +209,7 @@ const renderMessageSelector = (buses, messages, arch, network, bus) => {
         const name = data.name ? "Name: " + data.name : "";
         const comment = data.comment ? "Comment: " + data.comment[defaultLang] : "";
         const signals = data.signals ? "Signals: " + Object.keys(data.signals).join(", ") : "";
-        result += printSearchResultElementMessage("0x" + message, name, comment, signals);
+        result += printSearchResultElementMessage(toHexString(message, 3), name, comment, signals);
     }
 
     searchList.innerHTML = result;
@@ -299,7 +299,7 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
         checkedTreeField("-> values: ", signal.factor, 2);
 
         for (const [valKey, val] of Object.entries(signal.values)) {
-            checkedTreeField("-> 0x" + valKey + ": ", val[defaultLang], 3);
+            checkedTreeField("-> "+ toHexString(valKey, 2) + ": ", val[defaultLang], 3);
         }
 
         addField("-------------------", "");

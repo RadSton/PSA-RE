@@ -157,7 +157,7 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
         selectedInfo.innerHTML += `<span class="fieldTitle">Identifiers:</span>`;
 
     for (const [key, id] of Object.entries(node.id))
-        addTreeField(" -> " + key + ": ", "0x" + id, 1);
+        addTreeField(" -> " + key + ": ", toHexString(id, 2), 1);
 
     renderingDetails.innerHTML = `Showing node ${nodeId} from ${nodeArch} ${languageSwitcher()}`;
 }

@@ -29,3 +29,13 @@ const requestJSONWithBody = (method, url, body) => {
         xml.send(JSON.stringify(body));
     })
 }
+
+// yes this should be in its own file but for now this will do
+const toHexString = (integer, minDigits) => {
+    let hex = integer.toString(16).toUpperCase();
+
+    while(hex.length < minDigits) 
+        hex = "0" + hex;
+    
+    return "0x" + hex;
+}
