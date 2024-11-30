@@ -175,7 +175,7 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
             const network = splitBusName[0];
             const bus = splitBusName[1];
     
-            addTreeField(" -> Network: ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${bus}">${fullBusName}</a>`, 1);
+            addTreeField(" -> Bus: ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${bus}">${fullBusName}</a>`, 1);
     
             for (const [messageId, message] of Object.entries(messages)) {
                 addTreeField(" -> Message: ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${bus}&message=0x${messageId}">0x${messageId}</a>`, 2);

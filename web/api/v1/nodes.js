@@ -25,7 +25,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         const nodes = dbmuxev.nodes[req.params.id]
 
         if (!nodes) {
-            res.status(400).send({ error: "Invalid node!" })
+            res.status(400).send({ error: "Invalid arch!" })
             return;
         }
 
