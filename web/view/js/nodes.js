@@ -42,7 +42,7 @@ const setLockedSearch = (state) => {
 }
 
 const renderArchSelector = (nodesList) => {
-    console.log("renderArchSelector", nodesList)
+    console.log("Rendering architecture selector ...");
 
     renderingDetails.innerHTML = `Select Architecture ${languageSwitcher()}`;
     searchList.style.display = "block";
@@ -61,11 +61,11 @@ const renderArchSelector = (nodesList) => {
 }
 
 const renderNodeSelector = (nodeContainer, nodeArch) => {
-    console.log("renderNodeSelector", nodeContainer, nodeArch)
+    console.log("Rendering node selector ...");
 
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
-    
+
     renderingDetails.innerHTML = `Select a node from ${nodeArch} (${Object.keys(nodeContainer).length}) ${languageSwitcher()}`;
 
     if (nodeContainer.error) {
@@ -91,14 +91,27 @@ const renderNodeSelector = (nodeContainer, nodeArch) => {
     searchList.innerHTML = result;
 }
 
- // TODO: make work with alt names for example: RT3
-const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
-    const node = nodeContainer[nodeId];
-    console.log("renderNodeInfo", nodeArch, nodeId, node)
+// TODO: make work with alt names for example: RT3
+const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
+    console.log("Rendering node info screen ...");
+
+    let node = nodeContainer[nodeId];
 
     selectedInfo.style.display = "block";
     searchList.style.display = "none";
     renderingDetails.innerHTML = ``;
+
+    if (!node) {
+        const nodeByAlt = await requestJSONWithBody("POST", "/api/v1/node/" + nodeArch + "/findByAlt", {
+            nodeName: nodeId
+        })
+
+        if (!nodeByAlt.error) {
+            const [newKey, newNode] = Object.entries(nodeByAlt)[0]
+            node = newNode;
+            nodeId = newKey;
+        }
+    }
 
     if (!node) {
         selectedInfo.innerHTML = `
@@ -109,9 +122,14 @@ const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
     }
 
 
+
     selectedInfo.innerHTML = `
         <span class="selTitle">nodes/<span class="selType">${nodeArch}</span>.yml -> <span class="selType">${nodeId}</span></span>
     `;
+
+    if (node.redirectedFrom) {
+        selectedInfo.innerHTML += `<span class="field" style="text-align: center; padding-bottom: 1vh;">Redirected from <span class="selType">${node.redirectedFrom}</span> to <span class="selType">${nodeId}</span></span>`;
+    }
 
     const addField = (field, value) => selectedInfo.innerHTML += `<span class="field">${field}<span class="fieldValue">${value}</span></span>`
     const addTreeField = (field, value, depth) => selectedInfo.innerHTML += `<span class="field" data-depth="${depth}">${field}<span class="fieldValue">${value}</span></span>`
@@ -128,8 +146,12 @@ const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
     if (node.bus && node.bus.length > 0)
         selectedInfo.innerHTML += `<span class="fieldTitle">Busses:</span>`;
 
-    for (const bus of node.bus)
-        addTreeField(" -> ", bus, 1); // TODO: Make clickable
+    for (const bus of node.bus) {
+        const splitName = bus.split(".");
+        const network = splitName[0];
+        const busName = splitName[1];
+        addTreeField(" -> ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${busName}">${bus}</a>`, 1);
+    }
 
     if (node.id)
         selectedInfo.innerHTML += `<span class="fieldTitle">Identifiers:</span>`;
@@ -145,6 +167,7 @@ const renderNodeInfo = (nodeContainer, nodeId, nodeArch) => {
  * @param {HTMLDivElement} element 
  */
 const onNodeClick = (element) => {
+
     let node = element.getAttribute("data-node");
     let arch = element.getAttribute("data-arch");
     if (!node && !arch) return;
@@ -159,7 +182,6 @@ const onNodeClick = (element) => {
     if (arch) link += "arch=" + arch + "&";
     if (node) link += "node=" + node + "&";
 
-
     history.pushState(null, null, link);
 
     onLoad();
@@ -173,6 +195,8 @@ const onLoad = () => {
 
     selectedInfo.style.display = "none";
     searchList.style.display = "none";
+
+    console.log("Loading page ...");
 
     if (!archParam) {
         // Show arch select
@@ -207,6 +231,8 @@ search.addEventListener("keyup", () => {
         return;
     }
 
+    console.log("Searching for \"" + search.value + "\"");
+
     requestJSONWithBody("POST", "/api/v1/node/" + arch + "/search", {
         query: search.value
     }).then((data) => {
@@ -215,3 +241,5 @@ search.addEventListener("keyup", () => {
 })
 
 onLoad();
+
+window.addEventListener('popstate', onLoad, false);

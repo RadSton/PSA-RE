@@ -20,10 +20,10 @@ module.exports.loadSmart = (configuarion) => {
       architectures: {},
       cars: {},
       nodes: {},
-      busses: {},
+      buses: {},
       diag: {},
 
-      // Nearly same keys as in busses but Not in spec and different data; allows for simpler use I think .. I hope
+      // Nearly same keys as in buses but Not in spec and different data; allows for simpler use I think .. I hope
       networks: {}
    }
 
@@ -105,7 +105,7 @@ module.exports.loadSmart = (configuarion) => {
       }
    }
 
-   console.debug("Found " + networkCounter + " networks/busses from architectures.yml");
+   console.debug("Found " + networkCounter + " networks/buses from architectures.yml");
 
    for (const architectureKey of Object.keys(dbmuxev.networks)) {
 
@@ -114,26 +114,26 @@ module.exports.loadSmart = (configuarion) => {
       let networkBasePath = path.join(basePath, "./buses/" + architectureKey);
 
       if (!fs.existsSync(networkBasePath)) {
-         console.warn("Failed to load bus-content for $magenta" + architectureKey + "$yellow since there is no folder for it in ./busses/")
+         console.warn("Failed to load bus-content for $magenta" + architectureKey + "$yellow since there is no folder for it in ./buses/")
          continue;
       }
 
-      dbmuxev.busses[architectureKey] = {};
+      dbmuxev.buses[architectureKey] = {};
 
       for (const networkFullName of Object.keys(architecture)) {
          let networkPath = path.join(networkBasePath, "./" + networkFullName);
 
          if (!fs.existsSync(networkPath)) {
-            console.warn(`Failed to load network $magenta${networkFullName}$yellow for $magenta${architectureKey}$yellow since there is no folder for it in ./busses/${architectureKey}/`)
+            console.warn(`Failed to load network $magenta${networkFullName}$yellow for $magenta${architectureKey}$yellow since there is no folder for it in ./buses/${architectureKey}/`)
             continue;
          }
 
-         dbmuxev.busses[architectureKey][networkFullName] = {};
+         dbmuxev.buses[architectureKey][networkFullName] = {};
 
          for (const busMessageFile of fs.readdirSync(networkPath)) {
             if (busMessageFile.endsWith(".yml")) {
                try {
-                  dbmuxev.busses[architectureKey][networkFullName][busMessageFile.replaceAll(".yml", "")] = yaml.load(fs.readFileSync(path.join(networkPath, './' + busMessageFile), 'utf8'));
+                  dbmuxev.buses[architectureKey][networkFullName][busMessageFile.replaceAll(".yml", "")] = yaml.load(fs.readFileSync(path.join(networkPath, './' + busMessageFile), 'utf8'));
                } catch (error) {
                   console.error("Failed loading message " + path.join(networkPath, './' + busMessageFile) + ": " + error.reason + "!")
                }

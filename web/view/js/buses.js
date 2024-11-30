@@ -143,6 +143,8 @@ const onLoad = async () => {
 
 const renderArchitectureSelector = (buses) => {
 
+    console.log("Rendering architecture selector ...");
+
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
 
@@ -159,6 +161,8 @@ const renderArchitectureSelector = (buses) => {
 }
 
 const renderNetworkSelector = (buses, networkNames, arch) => {
+    console.log("Rendering network selector ...");
+
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
 
@@ -175,6 +179,8 @@ const renderNetworkSelector = (buses, networkNames, arch) => {
 
 
 const renderBusSelector = (buses, busNames, arch, network) => {
+    console.log("Rendering bus selector ...");
+
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
 
@@ -190,6 +196,8 @@ const renderBusSelector = (buses, busNames, arch, network) => {
 }
 
 const renderMessageSelector = (buses, messages, arch, network, bus) => {
+    console.log("Rendering message selector ...");
+
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
 
@@ -197,7 +205,6 @@ const renderMessageSelector = (buses, messages, arch, network, bus) => {
 
     let result = "";
 
-    console.log(messages);
     for (const [message, data] of Object.entries(messages)) {
         const name = data.name ? "Name: " + data.name : "";
         const comment = data.comment ? "Comment: " + data.comment[defaultLang] : "";
@@ -209,7 +216,7 @@ const renderMessageSelector = (buses, messages, arch, network, bus) => {
 }
 
 const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
-    console.log(message);
+    console.log("Rendering message info ...");
 
     selectedInfo.style.display = "block";
     searchList.style.display = "none";
@@ -305,10 +312,24 @@ search.addEventListener("keyup", () => {
         return;
     }
 
-    requestJSONWithBody("POST", "/api/v1/architecture/search", {
-        query: search.value
+    const urlParams = new URLSearchParams(location.search);
+
+    const arch = urlParams.get("arch");
+    const network = urlParams.get("network");
+    const bus = urlParams.get("bus");
+
+    if(!arch || !network || !bus) {
+        onLoad();
+        return;
+    }
+
+    requestJSONWithBody("POST", "/api/v1/buses/search", {
+        query: search.value,
+        arch,
+        identifyer: network + "." + bus
+
     }).then((data) => {
-        renderArchitectureSelector(data);
+        renderMessageSelector(undefined, data, arch, network, bus); // INFO: when changing renderMessageSelector to use buses variable this will cause an error!
     })
 })
 
@@ -317,118 +338,4 @@ search.addEventListener("keyup", () => {
 
 onLoad();
 
-
-/*
-
-
-const renderArchitectureSelector = (architectureContainer) => {
-    console.log("renderArchitectureSelector", architectureContainer)
-
-    searchList.style.display = "block";
-    selectedInfo.style.display = "none";
-
-    renderingDetails.innerHTML = `Select a architecture ${languageSwitcher()}`;
-
-    if (architectureContainer.error) {
-        searchList.innerHTML =
-            `<div style="display: block; text-align: center;">
-            <h1>Failed to load architectures:</h1> 
-            <h5>${architectureContainer.error}</h5>
-            <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
-        </div>`;
-        return;
-    }
-
-    let result = "";
-
-    for (const baseArchKey in architectureContainer) {
-        for (const [baseVariantKey, arch] of Object.entries(architectureContainer[baseArchKey])) {
-            const archKey = baseArchKey + "." + baseVariantKey;
-            let note = arch.comment ? "Comment: " + arch.comment[defaultLang] : "";
-            let networks = arch.networks ? "Networks: " + Object.keys(arch.networks).join(", ") : "";
-            let protocols = arch.protocols ? "Protocols: " + arch.protocols.join(", ") : "";
-
-            if (typeof arch == 'string')
-                networks = "Note: " + arch;
-
-
-            result += printSearchResultElementArch(archKey, note, networks, protocols);
-        }
-    }
-
-    searchList.innerHTML = result;
-}
-
-const renderArchInfo = (arch, fullArchitectureName) => {
-    console.log("renderArchInfo", arch, fullArchitectureName)
-
-    selectedInfo.style.display = "block";
-    searchList.style.display = "none";
-    renderingDetails.innerHTML = ``;
-
-    if (!arch) {
-        selectedInfo.innerHTML = `
-        <span class="selTitle">The architecture <span class="selType">${architectureName}</span> wasnt found in <span class="selType">architectures.yml</span></span>
-        <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
-        `;
-        return;
-    }
-
-    if (arch.error) {
-        selectedInfo.innerHTML = `
-        <span class="selTitle">Error when loading <span class="selType">${architectureName}</span> from <span class="selType">architectures.yml</span></span>
-        <span class="selTitle">Error: <span class="selType">${arch.error}</span></span>
-        <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
-        `;
-        return;
-    }
-
-    const nameArchParts = fullArchitectureName.split(".");
-    const architectureName = nameArchParts[0];
-    const architectureVariant = nameArchParts[1];
-
-
-    selectedInfo.innerHTML = `
-        <span class="selTitle"><span class="selType">architectures</span>.yml -> <span class="selType">${architectureName}</span></span>
-    `;
-
-    renderingDetails.innerHTML = `Showing architecture ${fullArchitectureName} ${languageSwitcher()}`;
-
-    const addField = (field, value) => selectedInfo.innerHTML += `<span class="field">${field}<span class="fieldValue">${value}</span></span>`
-    const addTreeField = (field, value, depth) => selectedInfo.innerHTML += `<span class="field" data-depth="${depth}">${field}<span class="fieldValue">${value}</span></span>`
-
-    addField("Architecture: ", architectureName)
-    addField("Variant: ", architectureVariant)
-
-    if (arch.comment)
-        addField("Comment: ", arch.comment[defaultLang]);
-
-    if (arch.protocols)
-        selectedInfo.innerHTML += `<span class="fieldTitle">Protocols:</span>`;
-
-    for (const protocol of arch.protocols)
-        addTreeField(" -> ", protocol, 1);
-
-
-
-    if (arch.networks)
-        selectedInfo.innerHTML += `<span class="fieldTitle">Networks:</span>`;
-
-    for (const [networkName, network ] of Object.entries(arch.networks)) {
-        addTreeField(" -> Network: ", networkName, 1);
-        for(const busName in network) {
-            const bus = network[busName];
-            addTreeField(" -> Bus: ", busName, 2);
-
-            if(bus.display_name) 
-                addTreeField(" -> Name: ", bus.display_name[defaultLang], 3);
-            
-            if(bus.comment) 
-                addTreeField(" -> Note: ", bus.comment[defaultLang], 3);
-        }
-        addTreeField(":---------:", "", 1);
-    }
-
-}
-
-*/
+window.addEventListener('popstate', onLoad, false);

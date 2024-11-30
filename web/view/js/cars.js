@@ -15,6 +15,8 @@ const printSearchResultElement = (carId, carName, carCodes, carCodesName) =>
 
 
 const renderCarListFromData = (data) => {
+    console.log("Rendering car selector ...");
+
     selectedInfo.style.display = "none";
     searchList.style.display = "block";
 
@@ -43,6 +45,8 @@ const renderCarListFromData = (data) => {
 }
 
 const renderCarInfo = (data, carId) => {
+    console.log("Rendering car infoscreen ...");
+
     selectedInfo.style.display = "block";
     searchList.style.display = "none";
     renderingDetails.innerHTML = ``;
@@ -55,8 +59,6 @@ const renderCarInfo = (data, carId) => {
         </div>`
         return;
     }
-
-    console.log(data);
 
     selectedInfo.innerHTML = `
         <span class="selTitle">cars/<span class="selType">${carId}</span>.yml</span>
@@ -118,6 +120,8 @@ const onLoad = () => {
 
     const carParam = urlParams.get("car");
 
+    console.log("Loading page ...");
+
     if (!carParam) {
         requestJSON("GET", "/api/v1/cars").then(renderCarListFromData)
         return;
@@ -139,3 +143,5 @@ search.addEventListener("keyup", () => {
 })
 
 onLoad();
+
+window.addEventListener('popstate', onLoad, false);

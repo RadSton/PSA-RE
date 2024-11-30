@@ -10,11 +10,44 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
         const node = dbmuxev.nodes[archId];
 
         if (!node) {
-            res.status(400).send({ error: "Could not find any nodes for " + archId  })
+            res.status(400).send({ error: "Could not find any nodes for " + archId })
         }
 
         res.send(node);
     });
+
+    app.post("/api/v1/node/:id/findByAlt", (req, res) => {
+        if (!req.body.nodeName) {
+            res.status(400).send({ error: "You need to declare nodeName in the body of the request!" })
+            return;
+        }
+
+        const nodes = dbmuxev.nodes[req.params.id]
+
+        if (!nodes) {
+            res.status(400).send({ error: "Invalid node!" })
+            return;
+        }
+
+        const nodeName = req.body.nodeName;
+
+        for (const [nodeKey, nodeData] of Object.entries(nodes)) {
+            if (nodeData.alt)
+                for (const altNames of nodeData.alt)
+                    if (altNames.includes(nodeName)) {
+                        let obj = {};
+                        obj[nodeKey] = {
+                            redirectedFrom: nodeName,
+                            ...nodeData
+                        };
+                        res.send(obj);
+                        return;
+                    }
+        }
+
+        res.send({ error: "No node was found"});
+
+    })
 
     app.post("/api/v1/node/:id/search", (req, res) => {
         if (!req.body.query) {

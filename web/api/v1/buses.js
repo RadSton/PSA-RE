@@ -1,88 +1,95 @@
 // Notes
 // Maybe add networks to search
 // I could copy the language handling from here to the others
-module.exports = (app = require("express")(), configuration, dbmuxev) => {
+module.exports = (app = require("express")(), configuration, dbmuxev = require("../../debugging_dbmuxev.json")) => {
     app.get("/api/v1/buses", (req, res) => {
-        res.send(dbmuxev.busses);
+        res.send(dbmuxev.buses);
     });
 
-    app.get("/api/v1/architecture/:id", (req, res) => {
-        const id = req.params.id;
-        if (!id.includes(".")) {
-            res.status(400).send({ error: "Invalid id-format" });
-            return;
-        }
-
-        let idSplit = id.split(".");
-
-        const arch = idSplit[0];
-        const vari = idSplit[1];
-
-        if (!dbmuxev.architectures[arch]) {
-            res.status(400).send({ error: "Invalid architecture" });
-            return;
-        }
-
-        const val = dbmuxev.architectures[arch][vari];
-
-        if (!val) {
-            res.status(400).send({ error: "Invalid architecture variation" });
-            return;
-        }
-
-
-        res.send(val);
-    });
-
-    app.get("/api/v1/architectureList", (req, res) => {
-        res.send(Object.keys(dbmuxev.networks));
-    })
-
-    app.post("/api/v1/architecture/search", (req, res) => {
+    app.post("/api/v1/buses/search", (req, res) => {
         if (!req.body.query) {
             res.status(400).send("You need to declare query in the json body of the request!")
             return;
         }
 
-        const query = req.body.query.toLowerCase();
+        if (!req.body.arch) {
+            res.status(400).send("You need to declare arch in the json body of the request!")
+            return;
+        }
+
+        if (!req.body.identifyer) {
+            res.status(400).send("You need to declare identifyer in the json body of the request!")
+            return;
+        }
+
+        const query = req.body.query.toUpperCase();
+        const arch = req.body.arch;
+        const identifyer = req.body.identifyer;
+
+        if (!dbmuxev.buses[arch]) {
+            res.status(404).send("There is no network/bus documentation for an architecture called \"" + arch + "\"!")
+            return;
+        }
+
+        if (!dbmuxev.buses[arch][identifyer]) {
+            res.status(404).send("There is no network/bus documentation for \"" + identifyer + "\" in \"" + arch + "\"!")
+            return;
+        }
+
+        const bus = dbmuxev.buses[arch][identifyer]; 
 
         let results = {};
 
-        // I dont wanna know how much time in this routine is spent on toLowerCase
-        func1: for (const architectureKey in dbmuxev.architectures) {
-            const architecture = dbmuxev.architectures[architectureKey];
+        func1: for (const messageId in bus) {
+            const message = bus[messageId];
 
-            if (typeof architecture !== 'object')
+            if (("0X" + messageId).includes(query)) {
+                results[messageId] = message;
                 continue func1;
-
-            results[architectureKey] = {};
-
-            func2: for (const variantKey in architecture) {
-                const fullName = architectureKey + "." + variantKey;
-                const variant = architecture[variantKey];
-
-                if (fullName.toLowerCase().includes(query)) {
-                    results[architectureKey][variantKey] = variant;
-                    continue func2;
-                }
-
-                if (variant.comment)
-                    for (const language in variant.comment)
-                        if (variant.comment[language].toLowerCase().includes(query)) {
-                            results[architectureKey][variantKey] = variant;
-                            continue func2;
-                        }
-
-                if (variant.protocols)
-                    for (const protocol of variant.protocols)
-                        if (protocol.toLowerCase().includes(query)) {
-                            results[architectureKey][variantKey] = variant;
-                            continue func2;
-                        }
             }
 
-            if (Object.keys(results[architectureKey]).length == 0)
-                results[architectureKey] = undefined;
+            if (typeof message !== 'object')
+                continue func1;
+
+            if (message.name.includes(query)) {
+                results[messageId] = message;
+                continue func1;
+            }
+
+            if (message.alt_names)
+                for (const altName of message.alt_names)
+                    if (altName.includes(query)) {
+                        results[messageId] = message;
+                        continue func1;
+                    }
+
+            if (message.comment)
+                for (const language in message.comment)
+                    if (message.comment[language].toUpperCase().includes(query)) {
+                        results[messageId] = message;
+                        continue func1;
+                    }
+
+            if (message.senders)
+                for (const sender of message.senders)
+                    if (sender.includes(query)) {
+                        results[messageId] = message;
+                        continue func1;
+                    }
+
+            if (message.receivers)
+                for (const receiver of message.receivers)
+                    if (receiver.includes(query)) {
+                        results[messageId] = message;
+                        continue func1;
+                    }
+
+            if (message.signals)
+                for (const signal in message.signals)
+                    if (signal.includes(query)) {
+                        results[messageId] = message;
+                        continue func1;
+                    }
 
         }
 

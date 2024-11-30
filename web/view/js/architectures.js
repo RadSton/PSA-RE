@@ -31,7 +31,7 @@ const setLockedSearch = (state) => {
 }
 
 const renderArchitectureSelector = (architectureContainer) => {
-    console.log("renderArchitectureSelector", architectureContainer)
+    console.log("Rendering architecture selector ...");
 
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
@@ -69,12 +69,17 @@ const renderArchitectureSelector = (architectureContainer) => {
 }
 
 const renderArchInfo = (arch, fullArchitectureName) => {
-    console.log("renderArchInfo", arch, fullArchitectureName)
+    console.log("Rendering architecture infoscreen ...");
 
     selectedInfo.style.display = "block";
     searchList.style.display = "none";
     renderingDetails.innerHTML = ``;
 
+    const nameArchParts = fullArchitectureName.split(".");
+    const architectureName = nameArchParts[0];
+    const architectureVariant = nameArchParts[1];
+
+    
     if (!arch) {
         selectedInfo.innerHTML = `
         <span class="selTitle">The architecture <span class="selType">${architectureName}</span> wasnt found in <span class="selType">architectures.yml</span></span>
@@ -91,10 +96,6 @@ const renderArchInfo = (arch, fullArchitectureName) => {
         `;
         return;
     }
-
-    const nameArchParts = fullArchitectureName.split(".");
-    const architectureName = nameArchParts[0];
-    const architectureVariant = nameArchParts[1];
 
 
     selectedInfo.innerHTML = `
@@ -164,14 +165,16 @@ const onLoad = () => {
     selectedInfo.style.display = "none";
     searchList.style.display = "none";
 
+    console.log("Loading page ...");
+
     if (!archParam) {
         // Show arch select
-        requestJSON("GET", "/api/v1/architectures").then((a) => renderArchitectureSelector(a));
+        requestJSON("GET", "/api/v1/architectures").then((a) => renderArchitectureSelector(a))
         return;
     }
 
     // show arch
-    requestJSON("GET", "/api/v1/architecture/" + archParam).then((a) => renderArchInfo(a, archParam));
+    requestJSON("GET", "/api/v1/architecture/" + archParam).then((a) => renderArchInfo(a, archParam)).catch(error => renderArchInfo({error}, archParam));
 }
 
 search.addEventListener("keyup", () => {
@@ -188,3 +191,5 @@ search.addEventListener("keyup", () => {
 })
 
 onLoad();
+
+window.addEventListener('popstate', onLoad, false);
