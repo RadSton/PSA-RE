@@ -55,11 +55,32 @@ const language = (lang) => {
     onLoad();
 }
 
+const createConvertLink = (converter, arch, busIdentifyer) => `<span class="convertLink languageSwitcher">Download as <span data-sel style="cursor: pointer;" onClick="createConvertion('${converter}','${arch}','${busIdentifyer}')">${converter}-File</span> (Choose language beforehand!)</span>`
+
 const setLockedSearch = (state) => {
     if (state)
         search.value = "";
     search.disabled = state;
     search.placeholder = state ? "Choose an architecture before searching" : "Start typing to search for a node";
+}
+
+const createConvertion = async (converter, arch, bus) => {
+
+    const data = await requestJSON("GET", "/api/v1/convert/" + converter + "/" + arch + "/" + bus + "/" + defaultLang)
+
+    if (data.error) {
+        try { await onLoad(); } catch (e) { }
+        renderingDetails.innerHTML += `<br>Download-Error: ` + data.error;
+        return;
+    }
+
+    const downloadA = document.createElement('a');
+    downloadA.style.display = 'none';
+    downloadA.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data.file);
+    downloadA.download = bus + '-' + defaultLang + '.' + data.extention;
+    document.body.appendChild(downloadA);
+    downloadA.click();
+    document.body.removeChild(downloadA);
 }
 
 /**
@@ -201,7 +222,7 @@ const renderMessageSelector = (buses, messages, arch, network, bus) => {
     searchList.style.display = "block";
     selectedInfo.style.display = "none";
 
-    renderingDetails.innerHTML = `Select a message from ${network}.${bus} in ${arch} ${languageSwitcher()}`;
+    renderingDetails.innerHTML = `Select a message from ${network}.${bus} in ${arch} ${languageSwitcher()}<br/> ${createConvertLink("DBC", arch, network + "." + bus)}`;
 
     let result = "";
 
@@ -299,7 +320,7 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
         checkedTreeField("-> values: ", signal.factor, 2);
 
         for (const [valKey, val] of Object.entries(signal.values)) {
-            checkedTreeField("-> "+ toHexString(valKey, 2) + ": ", val[defaultLang], 3);
+            checkedTreeField("-> " + toHexString(valKey, 2) + ": ", val[defaultLang], 3);
         }
 
         addField("-------------------", "");
@@ -318,7 +339,7 @@ search.addEventListener("keyup", () => {
     const network = urlParams.get("network");
     const bus = urlParams.get("bus");
 
-    if(!arch || !network || !bus) {
+    if (!arch || !network || !bus) {
         onLoad();
         return;
     }

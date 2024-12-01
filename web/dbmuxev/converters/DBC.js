@@ -18,7 +18,7 @@ module.exports = {
             return { error: "Invalid bus"}
         const messages = dbmuxev.buses[arch][bus];
         const nodes = dbmuxev.nodes[arch]
-
+        
         /*
         Implemented after:
         https://github.com/stefanhoelzl/CANpy/blob/master/docs/DBC_Specification.md
@@ -93,7 +93,7 @@ NS_ :
                     continue;
                 }
                 if (signalName.match(/^\d/)) {
-                    console.warn("[DBC] Had to skip data because signal $magenta" + signalName + "$yellow in $magenta0x" + messageId + "$yellow because its name starts with \"0\" and this is incompatible with many dbc program viewers")
+                    console.warn("[DBC] Had to skip data because signal $magenta" + signalName + "$yellow in $magenta0x" + messageId + "$yellow because its name starts with a number and this is causes errors with many dbc viewer programs")
                     continue;
                 }
                 const { length, startBit } = bitHelper.convertDBMUXBitsToBigEndianFormat(signal.bits)
