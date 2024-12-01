@@ -6,14 +6,15 @@ require("./utils/BetterLogging")({
 const express = require("express");
 const { networkInterfaces } = require('os');
 
-const dbmuxev = require("./dbmuxev/loader").loadSmart(configuarion);
+const dbmuxevLibrary = require("./dbmuxev/dbmuxev");
+const dbmuxev = dbmuxevLibrary.loadSmart(configuarion);
 
 const app = express();
 
 app.use(express.static(configuarion.STATIC_WEB_ROOT))
 app.use(express.json());
 
-require("./api/APILoader").load(app, configuarion, dbmuxev);
+require("./api/APILoader").load(app, configuarion, dbmuxev, dbmuxevLibrary);
 
 app.get("/cars", (req, res) => {
     res.sendFile(__dirname + "/view/cars.html");

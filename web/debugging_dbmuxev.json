@@ -9,6 +9,7 @@
                 "networks": {
                     "CAN_HS": {
                         "IS": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Inter-systems",
                                 "fr": "Inter-systemes"
@@ -21,6 +22,7 @@
                     },
                     "VAN_LS": {
                         "CONF": {
+                            "protocol": "VAN",
                             "display_name": {
                                 "en": "Comfort",
                                 "fr": "Confort"
@@ -31,6 +33,7 @@
                             }
                         },
                         "CAR": {
+                            "protocol": "VAN",
                             "display_name": {
                                 "en": "Body",
                                 "fr": "Carrosserie"
@@ -54,6 +57,8 @@
                 "networks": {
                     "HS": {
                         "IS": {
+                            "protocol": "CAN",
+                            "bitrate": 500,
                             "display_name": {
                                 "en": "Inter-systems",
                                 "fr": "Inter-systemes"
@@ -66,6 +71,8 @@
                     },
                     "LS": {
                         "CONF": {
+                            "protocol": "CAN",
+                            "bitrate": 125,
                             "display_name": {
                                 "en": "Comfort bus",
                                 "fr": "Bus confort"
@@ -76,6 +83,8 @@
                             }
                         },
                         "CAR": {
+                            "protocol": "CAN",
+                            "bitrate": 125,
                             "display_name": {
                                 "en": "Body",
                                 "fr": "Carrosserie"
@@ -84,6 +93,7 @@
                     },
                     "LIN": {
                         "LIN": {
+                            "protocol": "LIN",
                             "display_name": {
                                 "en": "LIN",
                                 "fr": "LIN"
@@ -110,6 +120,7 @@
                 "networks": {
                     "HS": {
                         "IS": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Inter-systems",
                                 "fr": "Inter-systemes"
@@ -120,6 +131,7 @@
                             }
                         },
                         "LAS": {
+                            "protocol": "CAN",
                             "dispaly_name": {
                                 "en": "Suspension Systems",
                                 "fr": "Liaison Au Sol"
@@ -132,18 +144,21 @@
                     },
                     "LS": {
                         "CONF": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Comfort",
                                 "fr": "Confort"
                             }
                         },
                         "INFO-DIV": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Infotainement",
                                 "fr": "Info-Divertissement"
                             }
                         },
                         "CAR": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Body",
                                 "fr": "Carrosserie"
@@ -152,6 +167,7 @@
                     },
                     "LIN": {
                         "LIN": {
+                            "protocol": "LIN",
                             "display_name": {
                                 "en": "LIN",
                                 "fr": "LIN"
@@ -168,6 +184,7 @@
                 "networks": {
                     "HS": {
                         "IS": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Inter-systems",
                                 "fr": "Inter-systemes"
@@ -176,12 +193,14 @@
                     },
                     "LS": {
                         "HABITACLE": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Passenger compartment",
                                 "fr": "Habitacle"
                             }
                         },
                         "INFO-DIV": {
+                            "protocol": "CAN",
                             "display_name": {
                                 "en": "Infotainement",
                                 "fr": "Info-Divertissement"
@@ -190,6 +209,7 @@
                     },
                     "LIN": {
                         "LIN": {
+                            "protocol": "LIN",
                             "display_name": {
                                 "en": "LIN",
                                 "fr": "LIN"
@@ -1821,7 +1841,11 @@
                     "EMF-A",
                     "EMF-C",
                     "EMF-C-C"
-                ]
+                ],
+                "name": {
+                    "en": "Display",
+                    "fr": "Afficheur"
+                }
             },
             "CDC": {
                 "bus": [
@@ -2223,6 +2247,94 @@
     "buses": {
         "AEE2004.full": {
             "HS.IS": {
+                "208": {
+                    "id": 520,
+                    "name": "GENERIC_ENGINE_DATA",
+                    "alt_names": [],
+                    "length": 8,
+                    "comment": {
+                        "en": "Generic Engine Data",
+                        "fr": "Données moteur génériques"
+                    },
+                    "type": "can",
+                    "periodicity": "100",
+                    "senders": [
+                        "CMM"
+                    ],
+                    "receivers": [],
+                    "signals": {
+                        "ENGINE_RPM": {
+                            "bits": "1.7-2.0",
+                            "type": "uint",
+                            "factor": 0.125,
+                            "min": 0,
+                            "max": 8196,
+                            "units": "rpm"
+                        },
+                        "ENGINE_TORQUE_UNVERIFYED": {
+                            "bits": "3.7-3.0",
+                            "type": "uint",
+                            "factor": 0.5,
+                            "offset": 50,
+                            "min": 50,
+                            "max": 177,
+                            "units": "Nm"
+                        },
+                        "THROTTLE_PERCENTAGE": {
+                            "bits": "4.7-4.0",
+                            "type": "uint",
+                            "factor": 0.5,
+                            "min": 0,
+                            "max": 100
+                        },
+                        "COMPRESSOR_ENGAGEMENT_ALLOWED_UNVERIFYED": {
+                            "bits": "5.0",
+                            "type": "uint",
+                            "values": {
+                                "0": {
+                                    "en": "Request for engagement",
+                                    "fr": "Demande d'enclenchement"
+                                },
+                                "1": {
+                                    "en": "No engagement allowed",
+                                    "fr": "Enclenchement interdit"
+                                }
+                            }
+                        },
+                        "BREAKS_PRESSED": {
+                            "bits": "5.1",
+                            "type": "uint",
+                            "values": {
+                                "0": {
+                                    "en": "Breakes released",
+                                    "fr": "Frein relache"
+                                },
+                                "1": {
+                                    "en": "Breakes applied",
+                                    "fr": "Frein appuye"
+                                }
+                            }
+                        },
+                        "CRUISE_CONTROL_STATUS_UNVERIFYED": {
+                            "bits": "5.3-5.2",
+                            "type": "uint",
+                            "values": {
+                                "0": {
+                                    "en": "Cruise control off",
+                                    "de": "régulateur de vitesse off"
+                                },
+                                "1": {
+                                    "en": "Pedal recovery",
+                                    "de": "Reprise pedale"
+                                },
+                                "2": {
+                                    "en": "Cruise control on",
+                                    "de": "régulateur de vitesse on"
+                                }
+                            }
+                        }
+                    }
+                },
                 "305": {
                     "id": 773,
                     "name": "WHEEL_SENSOR",
@@ -5454,7 +5566,7 @@
                 "257": {
                     "id": 599,
                     "name": "CMB_ODOMETER",
-                    "lenght": 6,
+                    "length": 6,
                     "comment": {
                         "en": "Odometer data from CMB",
                         "fr": "Totaliseur kilometrique du CMB"
@@ -5554,7 +5666,7 @@
                 "265": {
                     "id": 613,
                     "name": "RADIO_STATUS_FM_CURRENT",
-                    "length": 1,
+                    "length": 4,
                     "comment": {
                         "en": "Current station informations",
                         "fr": "Informations sur la station FM selectionnee"
@@ -5956,7 +6068,7 @@
                 "317": {
                     "id": 791,
                     "name": "CMB_CONFIG",
-                    "lenght": 8,
+                    "length": 8,
                     "comment": {
                         "en": "CMB configuration",
                         "fr": "configuration du CMB"
@@ -6786,7 +6898,7 @@
                     ],
                     "signals": {
                         "VIN_1": {
-                            "bits": "3.7-1.0",
+                            "bits": "1.7-3.0",
                             "type": "str"
                         }
                     }
@@ -9844,7 +9956,7 @@
                             }
                         },
                         "SCROLL": {
-                            "bits": "2.0-2.7",
+                            "bits": "2.7-2.0",
                             "alt_names": [
                                 "HDC_MOLETTE",
                                 "CMPT_MOL_ET_HDC"
@@ -9966,7 +10078,7 @@
                     ],
                     "signals": {
                         "VIN_3": {
-                            "bits": "8.7-1.0",
+                            "bits": "1.0-8.7",
                             "type": "str"
                         }
                     }
@@ -10203,7 +10315,7 @@
                     ],
                     "signals": {
                         "VIN_2": {
-                            "bits": "6.7-1.0",
+                            "bits": "1.7-6.0",
                             "type": "str"
                         }
                     }
@@ -10600,6 +10712,7 @@
     "networks": {
         "AEE2001.full": {
             "CAN_HS.IS": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Inter-systems",
                     "fr": "Inter-systemes"
@@ -10610,6 +10723,7 @@
                 }
             },
             "VAN_LS.CONF": {
+                "protocol": "VAN",
                 "display_name": {
                     "en": "Comfort",
                     "fr": "Confort"
@@ -10620,6 +10734,7 @@
                 }
             },
             "VAN_LS.CAR": {
+                "protocol": "VAN",
                 "display_name": {
                     "en": "Body",
                     "fr": "Carrosserie"
@@ -10628,6 +10743,8 @@
         },
         "AEE2004.full": {
             "HS.IS": {
+                "protocol": "CAN",
+                "bitrate": 500,
                 "display_name": {
                     "en": "Inter-systems",
                     "fr": "Inter-systemes"
@@ -10638,6 +10755,8 @@
                 }
             },
             "LS.CONF": {
+                "protocol": "CAN",
+                "bitrate": 125,
                 "display_name": {
                     "en": "Comfort bus",
                     "fr": "Bus confort"
@@ -10648,12 +10767,15 @@
                 }
             },
             "LS.CAR": {
+                "protocol": "CAN",
+                "bitrate": 125,
                 "display_name": {
                     "en": "Body",
                     "fr": "Carrosserie"
                 }
             },
             "LIN.LIN": {
+                "protocol": "LIN",
                 "display_name": {
                     "en": "LIN",
                     "fr": "LIN"
@@ -10662,6 +10784,7 @@
         },
         "AEE2010.full": {
             "HS.IS": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Inter-systems",
                     "fr": "Inter-systemes"
@@ -10672,6 +10795,7 @@
                 }
             },
             "HS.LAS": {
+                "protocol": "CAN",
                 "dispaly_name": {
                     "en": "Suspension Systems",
                     "fr": "Liaison Au Sol"
@@ -10682,24 +10806,28 @@
                 }
             },
             "LS.CONF": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Comfort",
                     "fr": "Confort"
                 }
             },
             "LS.INFO-DIV": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Infotainement",
                     "fr": "Info-Divertissement"
                 }
             },
             "LS.CAR": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Body",
                     "fr": "Carrosserie"
                 }
             },
             "LIN.LIN": {
+                "protocol": "LIN",
                 "display_name": {
                     "en": "LIN",
                     "fr": "LIN"
@@ -10708,24 +10836,28 @@
         },
         "AEE2010.eco": {
             "HS.IS": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Inter-systems",
                     "fr": "Inter-systemes"
                 }
             },
             "LS.HABITACLE": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Passenger compartment",
                     "fr": "Habitacle"
                 }
             },
             "LS.INFO-DIV": {
+                "protocol": "CAN",
                 "display_name": {
                     "en": "Infotainement",
                     "fr": "Info-Divertissement"
                 }
             },
             "LIN.LIN": {
+                "protocol": "LIN",
                 "display_name": {
                     "en": "LIN",
                     "fr": "LIN"

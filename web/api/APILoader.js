@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-module.exports.load = (app, configuration, dbmuxev) => {
+module.exports.load = (app, configuration, dbmuxev, dbmuxevLibrary) => {
     console.info("Trying to load all api endpoints");
     fs.readdirSync(path.join(__dirname, "./"))
         .filter(name => !name.includes("."))
@@ -11,7 +11,7 @@ module.exports.load = (app, configuration, dbmuxev) => {
                 .forEach(jsFile => {
                     console.debug("Registering API-Endpoint-Definition-File " + `./${folder}/${jsFile}`);
                     const javascript = require(`./${folder}/${jsFile}`);
-                    javascript(app, configuration, dbmuxev);
+                    javascript(app, configuration, dbmuxev, dbmuxevLibrary);
                 })
         });
 

@@ -484,3 +484,31 @@ Response-Body in JSON format:
 | You need to declare identifyer in the json body of the request!           | No identifyer in json body of request                                                |
 | There is no network/bus documentation for an architecture called "$ARCH"! | The architecture supplied by the json body doesnt exist / doesnt have a buses folder |
 | There is no network/bus documentation for "$IDENTIFYER" in "$ARCH"!       | Could not find network / bus $IDENTIFYER in buses of architecture $ARCH              |
+
+## Converters
+
+### GET /api/v1/converters
+
+This response returns all available converters for DBMUXEv
+
+```json
+["$CONVERTER"]
+```
+
+### GET /api/v1/convert/:CONVERTER/:ARCHITECTURE/:BUS/:LANGUAGE
+
+This response executes a conveter with the specified paramerters
+
+| Parameter    | Example      |
+| ------------ | ------------ |
+| CONVERTER    | "DBC"        |
+| ARCHITECTURE | AEE2004.full |
+| BUS          | LS.CONF      |
+| LANGUAGE     | "en" or "fr" |
+
+```json
+{
+    "extention": "$FILE_EXTENTION",
+    "file": "$FILE_CONTENT"
+}
+```

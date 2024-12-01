@@ -3,6 +3,8 @@ const fs = require("fs");
 const yaml = require('js-yaml'); // to read (fast and easy)
 const yawn = require("yawn-yaml"); // to write (uses js-yaml to read and preserves comments / styling on saving)
 
+const converters = require("./converters");
+
 /**
  * Smart just means that is gonna take more time because it thinks about what files it will load! 
  * (It accually looks at the architectures and only parses files that are used within eachother at least for the most part)
@@ -145,9 +147,15 @@ module.exports.loadSmart = (configuarion) => {
    if (configuarion.SAVE_DEBBUGING_DBMUXEV_FILE)
       fs.writeFileSync(path.join(basePath, './web/debugging_dbmuxev.json'), JSON.stringify(dbmuxev));
 
+   converters.load();
+   
    let timeTook = Date.now() - timeStarted;
 
    console.info("Loaded dbmuxev in " + timeTook + "ms");
 
+
    return dbmuxev;
 }
+
+module.exports.runConverter = converters.convert;
+module.exports.getAvailableConverters = converters.availableConverters;
