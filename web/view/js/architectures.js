@@ -52,7 +52,9 @@ const renderArchitectureSelector = (architectureContainer) => {
 
     for (const baseArchKey in architectureContainer) {
         for (const [baseVariantKey, arch] of Object.entries(architectureContainer[baseArchKey])) {
+
             const archKey = baseArchKey + "." + baseVariantKey;
+
             let note = arch.comment ? "Comment: " + arch.comment[defaultLang] : "";
             let networks = arch.networks ? "Networks: " + Object.keys(arch.networks).join(", ") : "";
             let protocols = arch.protocols ? "Protocols: " + arch.protocols.join(", ") : "";
@@ -79,7 +81,7 @@ const renderArchInfo = (arch, fullArchitectureName) => {
     const architectureName = nameArchParts[0];
     const architectureVariant = nameArchParts[1];
 
-    
+
     if (!arch) {
         selectedInfo.innerHTML = `
         <span class="selTitle">The architecture <span class="selType">${architectureName}</span> wasnt found in <span class="selType">architectures.yml</span></span>
@@ -89,18 +91,25 @@ const renderArchInfo = (arch, fullArchitectureName) => {
     }
 
     if (arch.error) {
-        selectedInfo.innerHTML = `
-        <span class="selTitle">Error when loading <span class="selType">${architectureName}</span> from <span class="selType">architectures.yml</span></span>
-        <span class="selTitle">Error: <span class="selType">${arch.error}</span></span>
-        <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
-        `;
+        console.log(arch.error);
+
+        if (!arch.error?.message?.includes("TODO"))
+            selectedInfo.innerHTML = `
+                <span class="selTitle">Error when loading <span class="selType">${architectureName}</span> from <span class="selType">architectures.yml</span></span>
+                <span class="selTitle">Error: <span class="selType">${arch.error}</span></span>
+                <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
+                `;
+        else
+            selectedInfo.innerHTML = `
+                <span class="selTitle">Error when loading <span class="selType">${architectureName}</span> from <span class="selType">architectures.yml</span></span>
+                <span class="selTitle">This page is still TODO and not available yet!</span>
+                <span class="selTitle"><a class="headerLink selected" href="/architectures">Reset filters</a></span>
+                `;
         return;
     }
 
 
-    selectedInfo.innerHTML = `
-        <span class="selTitle"><span class="selType">architectures</span>.yml -> <span class="selType">${architectureName}</span></span>
-    `;
+    selectedInfo.innerHTML = `<span class="selTitle"><span class="selType">architectures</span>.yml -> <span class="selType">${architectureName}</span></span>`;
 
     renderingDetails.innerHTML = `Showing architecture ${fullArchitectureName} ${languageSwitcher()}`;
 
@@ -115,29 +124,34 @@ const renderArchInfo = (arch, fullArchitectureName) => {
 
     addField("Nodes: ", `<a href="/nodes?arch=${fullArchitectureName}" class="fieldLink">${architectureName}.${architectureVariant}</a>`)
 
-    if (arch.protocols)
+    if (arch.protocols) {
         selectedInfo.innerHTML += `<span class="fieldTitle">Protocols:</span>`;
 
-    for (const protocol of arch.protocols)
-        addTreeField(" -> ", protocol, 1);
+        for (const protocol of arch.protocols)
+            addTreeField(" -> ", protocol, 1);
+    }
 
+    if (!arch.networks) return;
 
+    selectedInfo.innerHTML += `<span class="fieldTitle">Networks:</span>`;
 
-    if (arch.networks)
-        selectedInfo.innerHTML += `<span class="fieldTitle">Networks:</span>`;
+    for (const [networkName, network] of Object.entries(arch.networks)) {
 
-    for (const [networkName, network ] of Object.entries(arch.networks)) {
         addTreeField(" -> Network: ", `<a href="/buses?arch=${fullArchitectureName}&network=${networkName}" class="fieldLink">${networkName}</a>`, 1);
-        for(const busName in network) {
+
+        for (const busName in network) {
+
             const bus = network[busName];
+
             addTreeField(" -> Bus: ", `<a href="/buses?arch=${fullArchitectureName}&network=${networkName}&bus=${busName}" class="fieldLink">${busName}</a>`, 2);
 
-            if(bus.display_name) 
+            if (bus.display_name)
                 addTreeField(" -> Name: ", bus.display_name[defaultLang], 3);
-            
-            if(bus.comment) 
+
+            if (bus.comment)
                 addTreeField(" -> Note: ", bus.comment[defaultLang], 3);
         }
+
         addTreeField(":---------:", "", 1);
     }
 
@@ -149,6 +163,7 @@ const renderArchInfo = (arch, fullArchitectureName) => {
  */
 const onNodeClick = (element) => {
     let arch = element.getAttribute("data-arch");
+
     if (!arch) return;
 
     let link = location.origin + "/architectures?";
@@ -161,7 +176,9 @@ const onNodeClick = (element) => {
 }
 
 const onLoad = () => {
+
     const urlParams = new URLSearchParams(location.search);
+
     const archParam = urlParams.get("arch");
 
     selectedInfo.style.display = "none";
@@ -176,10 +193,11 @@ const onLoad = () => {
     }
 
     // show arch
-    requestJSON("GET", "/api/v1/architecture/" + archParam).then((a) => renderArchInfo(a, archParam)).catch(error => renderArchInfo({error}, archParam));
+    requestJSON("GET", "/api/v1/architecture/" + archParam).then((a) => renderArchInfo(a, archParam)).catch(error => renderArchInfo({ error }, archParam));
 }
 
 search.addEventListener("keyup", () => {
+
     if (search.value.length < 1) {
         onLoad();
         return;

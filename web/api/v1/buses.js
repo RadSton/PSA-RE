@@ -1,12 +1,12 @@
-// Notes
-// Maybe add networks to search
-// I could copy the language handling from here to the others
+
 module.exports = (app = require("express")(), configuration, dbmuxev = require("../../debugging_dbmuxev.json")) => {
+    
     app.get("/api/v1/buses", (req, res) => {
         res.send(dbmuxev.buses);
     });
 
     app.post("/api/v1/buses/search", (req, res) => {
+        
         if (!req.body.query) {
             res.status(400).send("You need to declare query in the json body of the request!")
             return;
@@ -22,7 +22,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
             return;
         }
 
-        const query = req.body.query.toUpperCase();
+        const query = req.body.query.replaceAll(" ", "").toUpperCase();
         const arch = req.body.arch;
         const identifyer = req.body.identifyer;
 
@@ -41,6 +41,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         let results = {};
 
         func1: for (const messageId in bus) {
+
             const message = bus[messageId];
 
             if (("0X" + messageId).includes(query)) {
@@ -51,21 +52,21 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
             if (typeof message !== 'object')
                 continue func1;
 
-            if (message.name.includes(query)) {
+            if (message.name.replaceAll(" ", "").includes(query)) {
                 results[messageId] = message;
                 continue func1;
             }
 
             if (message.alt_names)
                 for (const altName of message.alt_names)
-                    if (altName.includes(query)) {
+                    if (altName.replaceAll(" ", "").includes(query)) {
                         results[messageId] = message;
                         continue func1;
                     }
 
             if (message.comment)
                 for (const language in message.comment)
-                    if (message.comment[language].toUpperCase().includes(query)) {
+                    if (message.comment[language].replaceAll(" ", "").toUpperCase().includes(query)) {
                         results[messageId] = message;
                         continue func1;
                     }
@@ -93,8 +94,6 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
 
         }
 
-
         res.send(results);
-
     })
 }

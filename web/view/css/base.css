@@ -93,28 +93,6 @@ input:focus {
     border-radius: 0 10px 10px 0;
 }
 
-/* 
-.searchresults {
-    background-color: var(--frame-background);
-    position: relative;
-    width: 100%;
-    height: 200px;
-    min-height: 60px;
-    max-height: 200px;
-    top: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1);
-}  */
-
-
-/* 
-.mainCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
-} */
-
 h1 {
     font-size: 32pt;
 }
@@ -283,7 +261,7 @@ break {
     padding-right: 3vw;
 }
 
-.languageSwitcher > span[data-sel] {
+.languageSwitcher>span[data-sel] {
     text-decoration: underline;
     font-weight: 800;
     color: #ffae43;

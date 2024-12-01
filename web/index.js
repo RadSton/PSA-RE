@@ -1,4 +1,5 @@
 const configuarion = require("./configuration.json");
+
 require("./utils/BetterLogging")({
     prefix: "$gray[$light_redPSA-RE-Web$gray]"
 });

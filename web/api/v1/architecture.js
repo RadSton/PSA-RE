@@ -1,13 +1,14 @@
-// Notes
-// Maybe add networks to search
-// I could copy the language handling from here to the others
+
 module.exports = (app = require("express")(), configuration, dbmuxev) => {
+
     app.get("/api/v1/architectures", (req, res) => {
         res.send(dbmuxev.architectures);
     });
 
     app.get("/api/v1/architecture/:id", (req, res) => {
+
         const id = req.params.id;
+
         if (!id.includes(".")) {
             res.status(400).send({ error: "Invalid id-format" });
             return;
@@ -30,7 +31,6 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
             return;
         }
 
-
         res.send(val);
     });
 
@@ -39,6 +39,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
     })
 
     app.post("/api/v1/architecture/search", (req, res) => {
+
         if (!req.body.query) {
             res.status(400).send("You need to declare query in the json body of the request!")
             return;
@@ -50,6 +51,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
 
         // I dont wanna know how much time in this routine is spent on toLowerCase
         func1: for (const architectureKey in dbmuxev.architectures) {
+
             const architecture = dbmuxev.architectures[architectureKey];
 
             if (typeof architecture !== 'object')
@@ -58,6 +60,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
             results[architectureKey] = {};
 
             func2: for (const variantKey in architecture) {
+
                 const fullName = architectureKey + "." + variantKey;
                 const variant = architecture[variantKey];
 
@@ -86,8 +89,6 @@ module.exports = (app = require("express")(), configuration, dbmuxev) => {
 
         }
 
-
         res.send(results);
-
     })
 }

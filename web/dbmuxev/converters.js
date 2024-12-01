@@ -5,9 +5,11 @@ const converters = {};
 
 module.exports.load = () => {
     console.info("Trying to register all dbmuxev converters");
+
     fs.readdirSync(path.join(__dirname, "./converters"))
         .filter(name => name.includes(".js") && !name.includes("_"))
         .forEach(jsFile => {
+           
             console.debug("Registering dbmuxev converter " + `./converters/${jsFile}`);
             const javascript = require(`./converters/${jsFile}`);
 
@@ -17,6 +19,7 @@ module.exports.load = () => {
             }
             converters[javascript.name] = javascript;
             console.debug("Registered dbmuxev converter $cyan" + javascript.name + "$magenta for $cyan." + javascript.fileExtention + "$magenta-files!");
+        
         });
 
 
@@ -43,10 +46,12 @@ module.exports.convert = (dbmuxev, converter, architecture, bus, language) => {
             return { error: result.error };
         
         return { file: result, extention: converters[converter].fileExtention }
+
     } catch (e) {
+
         console.error("Failed to run converter " + converters[converter].name + ": ");
         console.log(e);
+
         return { error: "Internal Server Error: Failed to run converter!" }
     }
-
 }

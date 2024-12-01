@@ -5,9 +5,6 @@ const renderingDetails = document.querySelector(".renderingDetails");
 const selectedInfo = document.querySelector(".selectedInfo");
 const search = document.querySelector(".search > input");
 
-
-// ?arch=AEE2004.full&network=HS&bus=IS&message=0x208
-
 const printSearchResultElementArch = (name, comment, codes, codeName) =>
     `<div class="searchResult" data-arch=${name}  onclick="onNodeClick(this)">
          <span class="searchResultId searchResultIdSmall">${name}</span>
@@ -75,6 +72,7 @@ const createConvertion = async (converter, arch, bus) => {
     }
 
     const downloadA = document.createElement('a');
+
     downloadA.style.display = 'none';
     downloadA.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data.file);
     downloadA.download = bus + '-' + defaultLang + '.' + data.extention;
@@ -92,22 +90,22 @@ const onNodeClick = (element) => {
 
     const urlParams = new URLSearchParams(location.search);
 
-    let arch = element.getAttribute("data-arch");
-    let network = element.getAttribute("data-network");
-    let bus = element.getAttribute("data-bus");
-    let message = element.getAttribute("data-message");
+    let arch =      element.getAttribute("data-arch");
+    let network =   element.getAttribute("data-network");
+    let bus =       element.getAttribute("data-bus");
+    let message =   element.getAttribute("data-message");
 
-    if (!arch) arch = urlParams.get("arch");
-    if (!network) network = urlParams.get("network");
-    if (!bus) bus = urlParams.get("bus");
-    if (!message) message = urlParams.get("message");
+    if (!arch)      arch = urlParams.get("arch");
+    if (!network)   network = urlParams.get("network");
+    if (!bus)       bus = urlParams.get("bus");
+    if (!message)   message = urlParams.get("message");
 
     let link = location.origin + "/buses?";
 
-    if (arch) link += "arch=" + arch + "&";
-    if (network) link += "network=" + network + "&";
-    if (bus) link += "bus=" + bus + "&";
-    if (message) link += "message=" + message + "&";
+    if (arch)       link += "arch=" + arch + "&";
+    if (network)    link += "network=" + network + "&";
+    if (bus)        link += "bus=" + bus + "&";
+    if (message)    link += "message=" + message + "&";
 
     history.pushState(null, null, link);
 
@@ -118,9 +116,9 @@ const onLoad = async () => {
     const urlParams = new URLSearchParams(location.search);
 
     // ?arch=AEE2004.full&network=HS&bus=IS&message=0x208
-    const arch = urlParams.get("arch");
+    const arch =    urlParams.get("arch");
     const network = urlParams.get("network");
-    const bus = urlParams.get("bus");
+    const bus =     urlParams.get("bus");
     const message = urlParams.get("message");
 
     selectedInfo.style.display = "none";
@@ -163,7 +161,6 @@ const onLoad = async () => {
 
 
 const renderArchitectureSelector = (buses) => {
-
     console.log("Rendering architecture selector ...");
 
     searchList.style.display = "block";
@@ -174,7 +171,9 @@ const renderArchitectureSelector = (buses) => {
     let result = "";
 
     for (const architecture of Object.keys(buses)) {
+
         const split = architecture.split(".");
+
         result += printSearchResultElementArch(architecture, "Architecture: " + split[0], "Variant: " + split[1], "Cars after " + split[0].replaceAll("AEE", ""));
     }
 
@@ -191,9 +190,9 @@ const renderNetworkSelector = (buses, networkNames, arch) => {
 
     let result = "";
 
-    for (const network of networkNames) {
+    for (const network of networkNames) 
         result += printSearchResultElementNetwork(network, "", "", "");
-    }
+    
 
     searchList.innerHTML = result;
 }
@@ -209,9 +208,9 @@ const renderBusSelector = (buses, busNames, arch, network) => {
 
     let result = "";
 
-    for (const bus of busNames) {
+    for (const bus of busNames) 
         result += printSearchResultElementBus(bus, "", "", "");
-    }
+    
 
     searchList.innerHTML = result;
 }
@@ -227,9 +226,11 @@ const renderMessageSelector = (buses, messages, arch, network, bus) => {
     let result = "";
 
     for (const [message, data] of Object.entries(messages)) {
+
         const name = data.name ? "Name: " + data.name : "";
         const comment = data.comment ? "Comment: " + data.comment[defaultLang] : "";
         const signals = data.signals ? "Signals: " + Object.keys(data.signals).join(", ") : "";
+
         result += printSearchResultElementMessage(toHexString(message, 3), name, comment, signals);
     }
 
@@ -251,9 +252,7 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
         return;
     }
 
-    selectedInfo.innerHTML = `
-        <span class="selTitle"><span class="selType">${arch}</span>/<span class="selType">${network}.${bus}</span>/<span class="selType">${messageId.replaceAll("0x", "")}</span>.yml -> <span class="selType">${messageId}</span></span>
-    `;
+    selectedInfo.innerHTML = `<span class="selTitle"><span class="selType">${arch}</span>/<span class="selType">${network}.${bus}</span>/<span class="selType">${messageId.replaceAll("0x", "")}</span>.yml -> <span class="selType">${messageId}</span></span>`;
 
     renderingDetails.innerHTML = `Showing message ${messageId} ${languageSwitcher()}`;
 
@@ -261,16 +260,22 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
     const addTreeField = (field, value, depth) => selectedInfo.innerHTML += `<span class="field" data-depth="${depth}">${field}<span class="fieldValue">${value}</span></span>`
 
     addField("Id: ", messageId);
+
     if (message.name)
         addField("Name: ", message.name);
+
     if (message.comment)
         addField("Comment: ", message.comment[defaultLang]);
+
     if (message.alt_names)
         addField("Alternative names: ", message.alt_names.join(", "));
+
     if (message.type)
         addField("Type: ", message.type);
+
     if (message.periodicity)
         addField("Periodicity: ", message.periodicity);
+
     if (message.length)
         addField("Length: ", message.length);
 
@@ -293,19 +298,27 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
     selectedInfo.innerHTML += `<span class="fieldTitle">Signals:</span>`;
 
     const checkedTreeField = (a, b, c) => {
+
         if (!a || !b || !c) return;
+
         addTreeField(a, b, c);
     }
 
     for (const signalName in message.signals) {
+
         const signal = message.signals[signalName];
+
         addTreeField("-> ", signalName, 1);
+
         if (signal.comment)
             checkedTreeField("-> Comment: ", signal.comment[defaultLang], 2);
+
         checkedTreeField("-> Bits: ", signal.bits, 2);
         checkedTreeField("-> Unused: ", signal.unused, 2);
+
         if (signal.alt_names)
             checkedTreeField("-> Alternative Names: ", signal.alt_names.join(", "), 2);
+
         checkedTreeField("-> type: ", signal.type, 2);
         checkedTreeField("-> Min: ", signal.min, 2);
         checkedTreeField("-> Max: ", signal.max, 2);
@@ -317,17 +330,18 @@ const renderMessageInfo = (buses, message, arch, network, bus, messageId) => {
             addField("-------------------", "");
             continue;
         }
+
         checkedTreeField("-> values: ", signal.factor, 2);
 
-        for (const [valKey, val] of Object.entries(signal.values)) {
+        for (const [valKey, val] of Object.entries(signal.values)) 
             checkedTreeField("-> " + toHexString(valKey, 2) + ": ", val[defaultLang], 3);
-        }
 
         addField("-------------------", "");
     }
 }
 
 search.addEventListener("keyup", () => {
+
     if (search.value.length < 1) {
         onLoad();
         return;
@@ -335,9 +349,9 @@ search.addEventListener("keyup", () => {
 
     const urlParams = new URLSearchParams(location.search);
 
-    const arch = urlParams.get("arch");
+    const arch =    urlParams.get("arch");
     const network = urlParams.get("network");
-    const bus = urlParams.get("bus");
+    const bus =     urlParams.get("bus");
 
     if (!arch || !network || !bus) {
         onLoad();

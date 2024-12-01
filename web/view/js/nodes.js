@@ -81,6 +81,7 @@ const renderNodeSelector = (nodeContainer, nodeArch) => {
     let result = "";
 
     for (const [nodeKey, node] of Object.entries(nodeContainer)) {
+
         let name = node.name ? "Name: " + node.name[defaultLang] : "";
         let altName = node.alt ? "Alternative names: " + node.alt.join(", ") : "";
         let comment = node.comment ? "Comment: " + node.comment[defaultLang] : "";
@@ -102,6 +103,7 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
     renderingDetails.innerHTML = ``;
 
     if (!node) {
+        
         const nodeByAlt = await requestJSONWithBody("POST", "/api/v1/node/" + nodeArch + "/findByAlt", {
             nodeName: nodeId
         })
@@ -123,13 +125,11 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
 
     renderingDetails.innerHTML = `Showing node ${nodeId} from ${nodeArch} ${languageSwitcher()}`;
 
-    selectedInfo.innerHTML = `
-        <span class="selTitle">nodes/<span class="selType">${nodeArch}</span>.yml -> <span class="selType">${nodeId}</span></span>
-    `;
+    selectedInfo.innerHTML = `<span class="selTitle">nodes/<span class="selType">${nodeArch}</span>.yml -> <span class="selType">${nodeId}</span></span>`;
 
-    if (node.redirectedFrom) {
+    if (node.redirectedFrom) 
         selectedInfo.innerHTML += `<span class="field" style="text-align: center; padding-bottom: 1vh;">Redirected from <span class="selType">${node.redirectedFrom}</span> to <span class="selType">${nodeId}</span></span>`;
-    }
+    
 
     const addField = (field, value) => selectedInfo.innerHTML += `<span class="field">${field}<span class="fieldValue">${value}</span></span>`
     const addTreeField = (field, value, depth) => selectedInfo.innerHTML += `<span class="field" data-depth="${depth}">${field}<span class="fieldValue">${value}</span></span>`
@@ -147,9 +147,11 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
         selectedInfo.innerHTML += `<span class="fieldTitle">Busses:</span>`;
 
     for (const bus of node.bus) {
+
         const splitName = bus.split(".");
         const network = splitName[0];
         const busName = splitName[1];
+
         addTreeField(" -> ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${busName}">${bus}</a>`, 1);
     }
 
@@ -171,6 +173,7 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
             selectedInfo.innerHTML += `<span class="fieldTitle">${text} Messages:</span>`;
     
         for (const [fullBusName, messages] of Object.entries(interactingMessages[type])) {
+
             const splitBusName = fullBusName.split(".");
             const network = splitBusName[0];
             const bus = splitBusName[1];
@@ -182,12 +185,16 @@ const renderNodeInfo = async (nodeContainer, nodeId, nodeArch) => {
     
                 if (message.name)
                     addTreeField(" -> Name: ", `${message.name}`, 3);
+
                 if (message.comment)
                     addTreeField(" -> Comment: ", `${message.comment[defaultLang]}`, 3);
+
                 if (message.length)
                     addTreeField(" -> Length: ", `${message.length}`, 3);
+
                 if (message.alt_names)
                     addTreeField(" -> Alternative Names: ", `${message.alt_names.join(", ")}`, 3);
+
                 if (message.signals)
                     addTreeField(" -> Signals: ", `${Object.keys(message.signals).join(", ")}`, 3);
     
@@ -259,6 +266,7 @@ const onLoad = () => {
 }
 
 search.addEventListener("keyup", () => {
+    
     if (search.value.length < 1) {
         onLoad();
         return;

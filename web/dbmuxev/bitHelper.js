@@ -12,6 +12,7 @@
  */
 
 module.exports.convertDBMUXBitsToBigEndianFormat = (bits) => {
+
     const raw = bits.replaceAll(".", "").split("-").map((x) => Number.parseInt(x)); // List of raw values without dot // f.e. "1.7-1.0" -> [7, 0] or "5.0" -> [32]
     const parsed = raw.map(convertToBigEndianLocation);
 
@@ -31,13 +32,17 @@ module.exports.convertDBMUXBitsToBigEndianFormat = (bits) => {
             data.startBit = parsed[1];
             data.length = parsed[0] - parsed[1];
         }
+
     } else {
+
         data.startBit = parsed[1];
         data.length = parsed[0] - parsed[1];
+
         if ((parsed[0] - parsed[1]) < 0) {
             data.startBit = parsed[0];
             data.length = parsed[1] - parsed[0];
         }
+
     }
 
     data.length += 1;
@@ -45,13 +50,13 @@ module.exports.convertDBMUXBitsToBigEndianFormat = (bits) => {
     return data;
 }
 
-// Functions made with help of GeoGebra and a lot of brainpower
-const yamlFormatFromBit = (x) => {
-    return Math.floor(x / 10) * 8 - (x % 10) - 1;
-}
+// Following 2 functions made with help of GeoGebra and a lot of brainpower
+const yamlFormatFromBit = (x) => Math.floor(x / 10) * 8 - (x % 10) - 1
 
 const convertToBigEndianLocation = (value) => {
+
     const yml = yamlFormatFromBit(value);
     const bitPositionModulo = (yml % 8);
+
     return (yml - bitPositionModulo) + (7 - bitPositionModulo);
 }

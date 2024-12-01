@@ -24,13 +24,16 @@ const renderCarListFromData = (data) => {
     let carCounter = 0;
 
     for (const [carId, car] of Object.entries(data)) {
+
         carCounter++;
+
         let carName = car.name != undefined ? car.name : "";
         let carCodesArray = [];
         let carCodesNamesArray = [];
 
         for (const [carCode, carCodeNames] of Object.entries(car.codes)) {
             carCodesArray.push(carCode);
+
             if (typeof carCodeNames === 'string')
                 carCodesNamesArray.push(carCodeNames)
             else
@@ -60,9 +63,7 @@ const renderCarInfo = (data, carId) => {
         return;
     }
 
-    selectedInfo.innerHTML = `
-        <span class="selTitle">cars/<span class="selType">${carId}</span>.yml</span>
-    `;
+    selectedInfo.innerHTML = `<span class="selTitle">cars/<span class="selType">${carId}</span>.yml</span>`;
 
     const addField = (field, value) => selectedInfo.innerHTML += `<span class="field">${field}<span class="fieldValue">${value}</span></span>`
     const addTreeField = (field, value, depth) => selectedInfo.innerHTML += `<span class="field" data-depth="${depth}">${field}<span class="fieldValue">${value}</span></span>`
@@ -73,7 +74,9 @@ const renderCarInfo = (data, carId) => {
     selectedInfo.innerHTML += `<span class="fieldTitle">Codes:</span>`;
 
     for (const [keyCode, code] of Object.entries(data.codes)) {
+
         const keyCodeStr = " -> " + keyCode + ": ";
+
         if (typeof code === 'string')
             addField(keyCodeStr, code)
         else
@@ -85,15 +88,22 @@ const renderCarInfo = (data, carId) => {
     let counter = 0;
 
     for(const versionKey of Object.keys(data.versions)) {
+
         counter++;
         const version = data.versions[versionKey]
+
         addTreeField("-> Version ", counter, 0);
         addTreeField("-> Name: ", versionKey, 1);
         addTreeField("-> Architecture: ", `<a class="fieldLink" href="/architectures?arch=${version.architecture}">${version.architecture}</a>`, 1); // TODO: Link
+        
         if(!version.nodes) continue;
+       
         addTreeField("-> Nodes: ", "", 1);
+       
         for(const [ nodeKey, ecuList] of Object.entries(version.nodes)) {
+
             addTreeField("-> ", nodeKey, 2);
+
             for(const ecuOnNode of ecuList) 
                 addTreeField("-> ", `<a class="fieldLink" href="/nodes?arch=${version.architecture}&node=${ecuOnNode}">${ecuOnNode}</a>`, 3); // TODO: Link
         }
@@ -107,7 +117,9 @@ const renderCarInfo = (data, carId) => {
  * @param {HTMLDivElement} element 
  */
 const onCarClick = (element) => {
+
     const carId = element.getAttribute("data-car");
+
     if (!carId) return;
 
     history.pushState(null, null, location.origin + "/cars?car=" + carId);
@@ -131,15 +143,18 @@ const onLoad = () => {
 }
 
 search.addEventListener("keyup", () => {
+
     if (search.value.length < 1) {
         onLoad();
         return;
     }
+    
     requestJSONWithBody("POST", "/api/v1/cars/search", {
         query: search.value
     }).then((data) => {
         renderCarListFromData(data);
     })
+    
 })
 
 onLoad();

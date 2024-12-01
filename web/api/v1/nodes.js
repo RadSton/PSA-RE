@@ -5,8 +5,8 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
     });
 
     app.get("/api/v1/nodes/:id", (req, res) => {
-        const archId = req.params.id;
 
+        const archId = req.params.id;
         const node = dbmuxev.nodes[archId];
 
         if (!node) {
@@ -17,6 +17,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
     });
 
     app.post("/api/v1/node/:id/findByAlt", (req, res) => {
+
         if (!req.body.nodeName) {
             res.status(400).send({ error: "You need to declare nodeName in the body of the request!" })
             return;
@@ -32,17 +33,23 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         const nodeName = req.body.nodeName;
 
         for (const [nodeKey, nodeData] of Object.entries(nodes)) {
-            if (nodeData.alt)
-                for (const altNames of nodeData.alt)
-                    if (altNames.includes(nodeName)) {
-                        let obj = {};
-                        obj[nodeKey] = {
-                            redirectedFrom: nodeName,
-                            ...nodeData
-                        };
-                        res.send(obj);
-                        return;
-                    }
+            if (!nodeData.alt)
+                continue;
+
+            for (const altNames of nodeData.alt) {
+                if (!altNames.includes(nodeName)) continue;
+
+                let obj = {};
+
+                obj[nodeKey] = {
+                    redirectedFrom: nodeName,
+                    ...nodeData
+                };
+
+                res.send(obj);
+
+                return;
+            }
         }
 
         res.send({ error: "No node was found" });
@@ -50,12 +57,14 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
     })
 
     app.post("/api/v1/node/:id/search", (req, res) => {
+
         if (!req.body.query) {
             res.status(400).send({ error: "You need to declare query in the body of the request!" })
             return;
         }
 
-        const node = dbmuxev.nodes[req.params.id]
+        const node = dbmuxev.nodes[req.params.id];
+
         if (!node) {
             res.status(400).send({ error: "Invalid node!" })
             return;
@@ -66,6 +75,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         let results = {};
 
         func1: for (const [nodeKey, nodeData] of Object.entries(node)) {
+            
             if (nodeKey.includes(query)) {
                 results[nodeKey] = nodeData;
                 continue func1;
@@ -97,6 +107,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
     })
 
     app.post("/api/v1/node/:id/findMessages", (req, res) => {
+        
         if (!req.body.nodeName) {
             res.status(400).send({ error: "You need to declare nodeName in the body of the request!" })
             return;
@@ -123,7 +134,9 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         let namesToSearch = [];
 
         namesToSearch.push(nodeName);
+
         const fullNode = dbmuxev.nodes[arch][nodeName];
+
         if (fullNode.alt)
             for (const name of fullNode.alt)
                 namesToSearch.push(name);
@@ -133,13 +146,17 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
         let response = { sending: {}, recieving: {} };
 
         for (const [bus, messages] of Object.entries(buses)) {
+
             response.sending[bus] = {};
             response.recieving[bus] = {};
+
             for (const [messageId, message] of Object.entries(messages)) {
+                
                 if (message.senders)
                     for (const sender of message.senders)
                         if (namesToSearch.includes(sender))
                             response.sending[bus][messageId] = message;
+
                 if (message.receivers)
                     for (const receiver of message.receivers)
                         if (namesToSearch.includes(receiver))
@@ -148,6 +165,7 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
 
             if (Object.keys(response.sending[bus]).length == 0)
                 response.sending[bus] = undefined;
+            
             if (Object.keys(response.recieving[bus]).length == 0)
                 response.recieving[bus] = undefined;
         }

@@ -46,20 +46,20 @@ module.exports.loadSmart = (configuarion) => {
 
    console.debug("Loaded " + Object.keys(dbmuxev.cars).length + " cars files from cars/*.yml");
 
-
    let inFolder = fs.readdirSync(path.join(basePath, './nodes'));
    let inArchitectures = [];
 
-   for (const parentArchitecture of Object.keys(dbmuxev.architectures)) {
+   for (const parentArchitecture of Object.keys(dbmuxev.architectures)) 
       for (const children of Object.keys(dbmuxev.architectures[parentArchitecture]))
          inArchitectures.push(parentArchitecture + "." + children);
-   }
+   
 
    for (const expectedNode of inArchitectures) {
       if (!fs.existsSync(path.join(basePath, './nodes/' + expectedNode + '.yml'))) {
          console.warn("Node " + expectedNode + " declared in architectures but file " + './nodes/' + expectedNode + '.yml' + " doesnt exist!")
          continue;
       }
+
       dbmuxev.nodes[expectedNode] = yaml.load(fs.readFileSync(path.join(basePath, './nodes/' + expectedNode + '.yml'), 'utf8'));
 
       inFolder.splice(inFolder.indexOf(expectedNode + ".yml"), 1);
@@ -134,11 +134,17 @@ module.exports.loadSmart = (configuarion) => {
 
          for (const busMessageFile of fs.readdirSync(networkPath)) {
             if (busMessageFile.endsWith(".yml")) {
+
                try {
+
                   dbmuxev.buses[architectureKey][networkFullName][busMessageFile.replaceAll(".yml", "")] = yaml.load(fs.readFileSync(path.join(networkPath, './' + busMessageFile), 'utf8'));
+              
                } catch (error) {
+
                   console.error("Failed loading message " + path.join(networkPath, './' + busMessageFile) + ": " + error.reason + "!")
+              
                }
+
             }
          }
 
@@ -152,7 +158,6 @@ module.exports.loadSmart = (configuarion) => {
    let timeTook = Date.now() - timeStarted;
 
    console.info("Loaded dbmuxev in " + timeTook + "ms");
-
 
    return dbmuxev;
 }
