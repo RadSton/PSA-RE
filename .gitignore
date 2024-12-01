@@ -290,3 +290,4 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+web/debugging_dbmuxev.json
