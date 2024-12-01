@@ -1,6 +1,6 @@
 id: 0x317
 name: 'CMB_CONFIG'
-lenght: 8
+length: 8
 comment:
   en: 'CMB configuration'
   fr: 'configuration du CMB'
