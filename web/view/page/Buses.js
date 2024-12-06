@@ -59,7 +59,7 @@ export default class Buses extends Shared {
     renderMessageSelector(messages, arch, network, bus) {
 
         this.setInfoActive(false);
-        this.setRenderingDetails(`Select a message from ${network}.${bus} in ${arch} ${this.generateLanguageSwitcher()}`);
+        this.setRenderingDetails(`Select a message from ${network}.${bus} in ${arch} ${this.generateLanguageSwitcher()} <br/> ${this.generateConvertLink("DBC", arch, network + "." + bus)}`);
 
         let result = "";
 

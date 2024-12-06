@@ -100,7 +100,7 @@ export default class {
 
 
     async createConvertion(converter, arch, bus) {
-        const data = await requestJSON("GET", "/api/v1/convert/" + converter + "/" + arch + "/" + bus + "/" + defaultLang)
+        const data = await requestJSON("GET", "/api/v1/convert/" + converter + "/" + arch + "/" + bus + "/" + this.defaultLang)
 
         if (data.error) {
             try { await onLoad(); /* LOAD */ } catch (e) { }
@@ -112,7 +112,7 @@ export default class {
 
         downloadCapsule.style.display = 'none';
         downloadCapsule.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data.file);
-        downloadCapsule.download = bus + '-' + defaultLang + '.' + data.extention;
+        downloadCapsule.download = bus + '-' + this.defaultLang + '.' + data.extention;
         document.body.appendChild(downloadCapsule);
         downloadCapsule.click();
         document.body.removeChild(downloadCapsule);
