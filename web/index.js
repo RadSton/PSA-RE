@@ -17,28 +17,8 @@ app.use(express.json());
 
 require("./api/APILoader").load(app, configuarion, dbmuxev, dbmuxevLibrary);
 
-app.get("/cars", (req, res) => {
-    res.sendFile(__dirname + "/view/cars.html");
-})  
-
-app.get("/nodes", (req, res) => {
-    res.sendFile(__dirname + "/view/nodes.html");
-})  
-
-app.get("/architecture*", (req, res) => {
-    res.sendFile(__dirname + "/view/architectures.html");
-})  
-
-app.get("/buses", (req, res) => {
-    res.sendFile(__dirname + "/view/buses.html");
-})  
-
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/view/architectures.html");
-})  
-
 app.get("/*", (req, res) => {
-    res.status(302).redirect("/");
+    res.sendFile(__dirname + "/view/index.html");
 })
 
 

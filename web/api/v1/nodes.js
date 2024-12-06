@@ -88,6 +88,13 @@ module.exports = (app = require("express")(), configuration, dbmuxev = require("
                         continue func1;
                     }
 
+            if (nodeData.bus)
+                for (const bus of nodeData.bus)
+                    if (bus.includes(query)) {
+                        results[nodeKey] = nodeData;
+                        continue func1;
+                    }
+
             if (nodeData.name)
                 if (nodeData.name.en.toUpperCase().includes(query) || nodeData.name.fr.toUpperCase().includes(query)) {
                     results[nodeKey] = nodeData;

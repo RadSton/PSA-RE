@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DBMUXEv Viewer: Nodes</title>
+    <title>DBMUXEv Viewer: Loading ...</title>
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -21,7 +21,7 @@
         <div class="searchbar">
             <div class="search">
                 <span class="material-symbols-outlined">search</span>
-                <input type="value" name="" disabled placeholder="Choose an architecture before searching" id="">
+                <input type="value" name="" disabled placeholder="Search disabled ..." id="">
             </div>
         </div>
         </div>
@@ -30,7 +30,7 @@
                 <span class="material-symbols-outlined">architecture</span>
                 Architecture
             </a>
-            <a class="headerLink selected" href="/nodes">
+            <a class="headerLink" href="/nodes">
                 <span class="material-symbols-outlined">hub</span>
                 Nodes
             </a>
@@ -46,12 +46,13 @@
     </header>
     <main>
         <h1><noscript>This page depends on javascript! Without it you are stuck and cant search!</noscript></h1>
-        <h5 class="renderingDetails">Loading nodes ...</h5>
-        <div class="searchList"></div>
+        
+        <h5 class="renderingDetails">Loading ...</h5>
 
+        <div class="searchList"></div>
         <div class="selectedInfo"></div>
     </main>
-    <script src="./js/nodes.js"></script>
+    <script type="module" src="./js/router.js"></script>
 </body>
 
 </html>
