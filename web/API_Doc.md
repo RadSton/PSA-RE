@@ -1,4 +1,4 @@
-# API Documentation for DBMUXEv
+# Basic API Documentation for DBMUXEv
 
 ## Architecture
 
@@ -512,3 +512,5 @@ This response executes a conveter with the specified paramerters
     "file": "$FILE_CONTENT"
 }
 ```
+
+The return-body parameter `$FILE_EXTENTION` is without a dot so "dbc" and `$FILE_CONTENT` is the whole file in text format. binary formats are currently not supported by this api endpoint!

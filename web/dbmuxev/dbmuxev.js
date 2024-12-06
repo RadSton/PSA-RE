@@ -49,10 +49,10 @@ module.exports.loadSmart = (configuarion) => {
    let inFolder = fs.readdirSync(path.join(basePath, './nodes'));
    let inArchitectures = [];
 
-   for (const parentArchitecture of Object.keys(dbmuxev.architectures)) 
+   for (const parentArchitecture of Object.keys(dbmuxev.architectures))
       for (const children of Object.keys(dbmuxev.architectures[parentArchitecture]))
          inArchitectures.push(parentArchitecture + "." + children);
-   
+
 
    for (const expectedNode of inArchitectures) {
       if (!fs.existsSync(path.join(basePath, './nodes/' + expectedNode + '.yml'))) {
@@ -138,11 +138,11 @@ module.exports.loadSmart = (configuarion) => {
                try {
 
                   dbmuxev.buses[architectureKey][networkFullName][busMessageFile.replaceAll(".yml", "")] = yaml.load(fs.readFileSync(path.join(networkPath, './' + busMessageFile), 'utf8'));
-              
+
                } catch (error) {
 
                   console.error("Failed loading message " + path.join(networkPath, './' + busMessageFile) + ": " + error.reason + "!")
-              
+
                }
 
             }
@@ -153,8 +153,9 @@ module.exports.loadSmart = (configuarion) => {
    if (configuarion.SAVE_DEBBUGING_DBMUXEV_FILE)
       fs.writeFileSync(path.join(basePath, './web/debugging_dbmuxev.json'), JSON.stringify(dbmuxev));
 
-   converters.load();
-   
+   if (!configuarion.DISABLE_CONVERSION_ENDPOINTS)
+      converters.load();
+
    let timeTook = Date.now() - timeStarted;
 
    console.info("Loaded dbmuxev in " + timeTook + "ms");

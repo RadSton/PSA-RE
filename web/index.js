@@ -1,26 +1,38 @@
 const configuarion = require("./configuration.json");
 
 require("./utils/BetterLogging")({
-    prefix: "$gray[$light_redPSA-RE-Web$gray]"
+    colorEnabled: configuarion.ENABLE_COLOR_LOGGING,
+    prefix: "$gray[$light_redDBMUXEv-Web$gray]"
 });
 
+if (configuarion.ENABLE_DBMUXEV_PARSING) {
+    global.dbmuxevLibrary = require("./dbmuxev/dbmuxev");
+    global.dbmuxev = dbmuxevLibrary.loadSmart(configuarion);
+}
+
+if (!configuarion.ENABLE_WEBSERVER) {
+    console.warn("$redSince config option $magentaENABLE_WEBSERVER$red is false the program will now exit after parsing the dbmuxev database!")
+    return;
+}
 const express = require("express");
 const { networkInterfaces } = require('os');
 
-const dbmuxevLibrary = require("./dbmuxev/dbmuxev");
-const dbmuxev = dbmuxevLibrary.loadSmart(configuarion);
-
 const app = express();
 
-app.use(express.static(configuarion.STATIC_WEB_ROOT))
+if (configuarion.ENABLE_WEB_UI)
+    app.use(express.static(configuarion.STATIC_WEB_ROOT))
+
 app.use(express.json());
 
-require("./api/APILoader").load(app, configuarion, dbmuxev, dbmuxevLibrary);
+if (configuarion.ENABLE_API && configuarion.ENABLE_DBMUXEV_PARSING)
+    require("./api/APILoader").load(app, configuarion, dbmuxev, dbmuxevLibrary);
 
-app.get("/*", (req, res) => {
-    res.sendFile(__dirname + "/view/index.html");
-})
+// Single Page Application
 
+if (configuarion.ENABLE_WEB_UI)
+    app.get("/*", (req, res) => {
+        res.sendFile(__dirname + "/view/index.html");
+    })
 
 app.listen(configuarion.WEB_PORT, () => {
     console.debug("Webserver running on port " + configuarion.WEB_PORT);

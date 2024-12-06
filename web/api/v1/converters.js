@@ -1,6 +1,8 @@
 
 module.exports = (app, configuration, dbmuxev, dbmuxevLibrary) => {
 
+    if (configuration.DISABLE_CONVERSION_ENDPOINTS) return;
+
     app.get("/api/v1/converters", (req, res) => {
         res.send(dbmuxevLibrary.getAvailableConverters());
     });
