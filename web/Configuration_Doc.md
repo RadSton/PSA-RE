@@ -8,6 +8,7 @@ Default Config:
 
     "ENABLE_WEBSERVER": true,
     "ENABLE_API": true,
+    "ENABLE_WEB_EDITING": true,
     "ENABLE_WEB_UI": true,
     "ENABLE_COLOR_LOGGING": true,
     "DISABLE_CONVERSION_ENDPOINTS": false,
@@ -43,6 +44,10 @@ This also gets overriden to `false` if `ENABLE_DBMUXEV_PARSING` is `false`
 ## ENABLE_WEB_UI: Enable the single page application
 
 If this is is false the static host of `STATIC_WEB_ROOT` is disabled and `index.html` wont be automaticly sent for request `GET /*`
+
+## ENABLE_WEB_EDITING: Enable editing of messages in the web ui
+
+This config option decides if the `/api/v1/editing` enpoints will be active and if the web ui will show edit buttons.
 
 ## ENABLE_COLOR_LOGGING: Enable ansi codes in console logging
 

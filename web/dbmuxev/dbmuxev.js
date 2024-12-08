@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const yaml = require('js-yaml'); // to read (fast and easy)
-//const yawn = require("yawn-yaml"); // to write (uses js-yaml to read and preserves comments / styling on saving)
+const yawn = require("yawn-yaml"); // to write (uses js-yaml to read and preserves comments / styling on saving)
 
 const converters = require("./converters");
 
@@ -165,3 +165,7 @@ module.exports.loadSmart = (configuarion) => {
 
 module.exports.runConverter = converters.convert;
 module.exports.getAvailableConverters = converters.availableConverters;
+
+module.exports.createMessage = (arch, network, bus, yamlContent) => {
+   
+}

@@ -18,6 +18,7 @@
   "homepage": "https://github.com/prototux/PSA-RE#readme",
   "dependencies": {
     "express": "^4.21.1",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "yawn-yaml": "^2.3.0"
   }
 }

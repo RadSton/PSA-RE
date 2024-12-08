@@ -31,7 +31,7 @@ if (configuarion.ENABLE_API && configuarion.ENABLE_DBMUXEV_PARSING)
 
 if (configuarion.ENABLE_WEB_UI)
     app.get("/*", (req, res) => {
-        res.sendFile(__dirname + "/view/index.html");
+        res.sendFile(__dirname + "/" + configuarion.STATIC_WEB_ROOT + "/index.html");
     })
 
 app.listen(configuarion.WEB_PORT, () => {
