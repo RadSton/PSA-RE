@@ -16,8 +16,12 @@ export default class {
         }, 1);
     }
 
-    redirectToLink(url) {
+    pushLink(url) {
         history.pushState(null, null, url);
+    }
+
+    redirectToLink(url) {
+        this.pushLink(url);
         // call router
         this.onRedirect();
     }
@@ -144,8 +148,6 @@ export default class {
     async render() { }
 
     async init() {
-        window.addEventListener('popstate', (a, b, c) => this.onRedirect(a, b, c), false);
-
         this.search.addEventListener("keyup", () => {
 
             if (this.search.value.length < 1) {

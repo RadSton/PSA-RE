@@ -13,6 +13,8 @@
 
 module.exports.convertDBMUXBitsToBigEndianFormat = (bits) => {
 
+    if(bits.length == 1) bits = bits + ".0";
+
     const raw = bits.replaceAll(".", "").split("-").map((x) => Number.parseInt(x)); // List of raw values without dot // f.e. "1.7-1.0" -> [7, 0] or "5.0" -> [32]
     const parsed = raw.map(convertToBigEndianLocation);
 

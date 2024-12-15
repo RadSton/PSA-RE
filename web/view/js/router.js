@@ -43,6 +43,17 @@ document.querySelectorAll(".headerLink").forEach((ele) => {
     ele.addEventListener("click", handleAElementClick)
 })
 
+let lastPathname = location.pathname;
+
+window.addEventListener('popstate', (a, b, c) => {
+    if (a.target.location.pathname == lastPathname)
+        currentPage.onRedirect(a, b, c)
+    else {
+        route();
+        lastPathname = a.target.location.pathname;
+    }
+}, false);
+
 document.addEventListener("click", (event) => {
     if (!event.target.matches(".fieldLink") && !event.target.matches(".headerLink ")) return;
     handleAElementClick(event);

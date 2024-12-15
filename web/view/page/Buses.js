@@ -197,7 +197,7 @@ export default class Buses extends Shared {
 
         let messages = this.buses[this.arch][this.network + "." + this.bus];
 
-        this.setLockedSearch(false);
+        this.setLockedSearch(false, "Search for message");
 
         if (!this.message) {
             this.renderMessageSelector(messages, this.arch, this.network, this.bus);
@@ -230,11 +230,13 @@ export default class Buses extends Shared {
     }
 
     async onSearch(query) {
-        requestJSONWithBody("POST", "/api/v1/cars/search",
+        requestJSONWithBody("POST", "/api/v1/buses/search",
             {
-                query
+                query,
+                arch: this.arch,
+                identifyer: this.network + "." + this.bus
             }
-        ).then((data) => this.renderCarListFromData(data))
+        ).then((data) => this.renderMessageSelector(data, this.arch, this.network, this.bus))
     }
 
 }

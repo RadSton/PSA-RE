@@ -12,13 +12,13 @@ module.exports = {
      */
     convert: (dbmuxev, arch, bus, lang) => {
 
-        if(!dbmuxev.networks[arch])
-            return { error: "Invalid architecture"}
+        if (!dbmuxev.networks[arch])
+            return { error: "Invalid architecture" }
 
         const busInfo = dbmuxev.networks[arch][bus];
 
-        if(!busInfo)
-            return { error: "Invalid bus"}
+        if (!busInfo)
+            return { error: "Invalid bus" }
 
         const messages = dbmuxev.buses[arch][bus];
         const nodes = dbmuxev.nodes[arch]
@@ -62,52 +62,57 @@ module.exports = {
             if (message.comment && message.comment[lang])
                 comments += `CM_ BO_ ${message.id} \"${message.comment[lang]}\";\n`;
 
+            if (message.signals)
+                for (let [signalName, signal] of Object.entries(message.signals)) {
 
-            for (const [signalName, signal] of Object.entries(message.signals)) {
+                    if (!signal.bits) {
+                        console.warn("[DBC] Had to skip data because signal.bits definition of $magenta" + signalName + "$yellow was missing in $magenta0x" + messageId)
+                        continue;
+                    }
 
-                if (!signal.bits) {
-                    console.warn("[DBC] Had to skip data because signal.bits definition of $magenta" + signalName + "$yellow was missing in $magenta0x" + messageId)
-                    continue;
+                    if(signalName.includes(" ")) {
+                        console.warn("[DBC] Had to automaticly fix data because signal $magenta" + signalName + "$yellow in $magenta0x" + messageId + "$yellow because its name contains a space and this is causes the dbc to be invalid")
+                        signalName = signalName.replaceAll(" ", "_")
+                    }
+
+                    if (signalName.match(/^\d/)) {
+                        console.warn("[DBC] Had to skip data because signal $magenta" + signalName + "$yellow in $magenta0x" + messageId + "$yellow because its name starts with a number and this is causes errors with many dbc viewer programs")
+                        continue;
+                    }
+
+                    const { length, startBit } = bitHelper.convertDBMUXBitsToBigEndianFormat(signal.bits)
+
+                    let unsigned = false;
+
+                    if (signal.type && signal.type.startsWith("u"))
+                        unsigned = true
+
+                    const factor = signal.factor != undefined ? signal.factor : 1;
+                    const offset = signal.offset != undefined ? signal.offset : 0;
+                    const min = signal.min != undefined ? signal.min : 0;
+                    const max = signal.max != undefined ? signal.max : 0;
+
+                    let units = signal.units != undefined ? signal.units : "";
+
+                    // TODO: DO NOT HARD CODE ENDIAN
+                    // @<ENDIAN>  
+                    // ENDIAN : 0 -> big 1 -> little 
+                    DBC += `\n SG_ ${signalName} : ${startBit}|${length}@1${unsigned ? "+" : "-"} (${factor},${offset}) [${min}|${max}] \"${units}\" ${reciver}`
+
+                    if (signal.comment && signal.comment[lang])
+                        comments += `CM_ SG_ ${message.id} ${signalName} \"${signal.comment[lang]}\";\n`;
+
+                    if (!signal.values) continue;
+
+                    let VAL_string = "";
+
+                    for (const [val, valueData] of Object.entries(signal.values)) {
+                        VAL_string += `${val} \"${valueData[lang]}\" `;
+                    }
+
+                    values += `VAL_ ${message.id} ${signalName} ${VAL_string};\n`;
                 }
 
-                if (signalName.match(/^\d/)) {
-                    console.warn("[DBC] Had to skip data because signal $magenta" + signalName + "$yellow in $magenta0x" + messageId + "$yellow because its name starts with a number and this is causes errors with many dbc viewer programs")
-                    continue;
-                }
-
-                const { length, startBit } = bitHelper.convertDBMUXBitsToBigEndianFormat(signal.bits)
-
-                let unsigned = false;
-
-                if (signal.type && signal.type.startsWith("u"))
-                    unsigned = true
-
-                const factor = signal.factor != undefined ? signal.factor : 1;
-                const offset = signal.offset != undefined ? signal.offset : 0;
-                const min = signal.min != undefined ? signal.min : 0;
-                const max = signal.max != undefined ? signal.max : 0;
-
-                let units = signal.units != undefined ? signal.units : "";
-
-                // TODO: DO NOT HARD CODE ENDIAN
-                // @<ENDIAN>  
-                // ENDIAN : 0 -> big 1 -> little 
-                DBC += `\n SG_ ${signalName} : ${startBit}|${length}@1${unsigned ? "+" : "-"} (${factor},${offset}) [${min}|${max}] \"${units}\" ${reciver}`
-
-                if (signal.comment && signal.comment[lang])
-                    comments += `CM_ SG_ ${message.id} ${signalName} \"${signal.comment[lang]}\";\n`;
-
-                if (!signal.values) continue;
-
-                let VAL_string = "";
-
-                for (const [val, valueData] of Object.entries(signal.values)) {
-                    VAL_string += `${val} \"${valueData[lang]}\" `;
-                }
-
-                values += `VAL_ ${message.id} ${signalName} ${VAL_string};\n`;
-            }
-            
             DBC += "\n";
         }
 
