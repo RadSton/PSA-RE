@@ -58,3 +58,7 @@ document.addEventListener("click", (event) => {
     if (!event.target.matches(".fieldLink") && !event.target.matches(".headerLink ")) return;
     handleAElementClick(event);
 })
+
+document.querySelector(".search > input").addEventListener("keyup", (event) => {
+    currentPage.handleKeyUpEvent(event);
+});

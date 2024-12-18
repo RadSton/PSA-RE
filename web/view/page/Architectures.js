@@ -10,17 +10,21 @@ export default class Architectures extends Shared {
     async init() {
         await super.init();
 
-        this.setLockedSearch(false, "Search for cars ...");
+        this.setLockedSearch(false, "Search for architectures ...");
     }
 
     async render() {
+        this.query = this.urlParams.get("query");
         this.archParam = this.urlParams.get("arch");
 
         this.selectedInfo.style.display = "none";
         this.searchList.style.display = "none";
 
         if (!this.archParam) {
-            requestJSON("GET", "/api/v1/architectures").then((a) => this.renderArchitectureSelector(a))
+            if (!this.query)
+                requestJSON("GET", "/api/v1/architectures").then((a) => this.renderArchitectureSelector(a))
+            else
+                this.simulateSearch(this.query);
             return;
         }
 
@@ -155,11 +159,12 @@ export default class Architectures extends Shared {
     }
 
     async onSearch(query) {
-        requestJSONWithBody("POST", "/api/v1/cars/search",
+        super.onSearch(query);
+        requestJSONWithBody("POST", "/api/v1/architecture/search",
             {
                 query
             }
-        ).then((data) => this.renderCarListFromData(data))
+        ).then((data) => this.renderArchitectureSelector(data))
     }
 
-}
+} 

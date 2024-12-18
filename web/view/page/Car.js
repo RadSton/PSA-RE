@@ -14,7 +14,13 @@ export default class Car extends Shared {
     }
 
     async render() {
+        this.query = this.urlParams.get("query");
         this.carParam = this.urlParams.get("car");
+
+        if(this.query) {
+            this.simulateSearch(this.query);
+            return;
+        }
 
         if (!this.carParam) {
             requestJSON("GET", "/api/v1/cars").then((a, b, c) => this.renderCarListFromData(a, b, c))
@@ -119,6 +125,7 @@ export default class Car extends Shared {
     }
 
     async onSearch(query) {
+        super.onSearch(query);
         requestJSONWithBody("POST", "/api/v1/cars/search",
             {
                 query

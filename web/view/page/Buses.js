@@ -166,6 +166,7 @@ export default class Buses extends Shared {
     }
 
     async render() {
+        this.query = this.urlParams.get("query");
         this.arch = this.urlParams.get("arch");
         this.network = this.urlParams.get("network");
         this.bus = this.urlParams.get("bus");
@@ -174,9 +175,8 @@ export default class Buses extends Shared {
         this.selectedInfo.style.display = "none";
         this.searchList.style.display = "none";
 
-        this.setLockedSearch(true, "Select bus first!");
-
         if (!this.arch || !this.buses[this.arch]) {
+            this.setLockedSearch(true, "Select bus first!");
             this.renderArchitectureSelector()
             return;
         }
@@ -184,6 +184,7 @@ export default class Buses extends Shared {
         let networkNames = Object.keys(this.buses[this.arch]).map(x => x.split(".")[0]);
 
         if (!this.network || !networkNames.includes(this.network)) {
+            this.setLockedSearch(true, "Select bus first!");
             this.renderNetworkSelector(networkNames);
             return;
         }
@@ -191,19 +192,26 @@ export default class Buses extends Shared {
         let busNames = Object.keys(this.buses[this.arch]).filter(x => x.startsWith(this.network)).map(x => x.split(".")[1]);
 
         if (!this.bus || !busNames.includes(this.bus)) {
+            this.setLockedSearch(true, "Select bus first!");
             this.renderBusSelector(busNames, this.arch, this.network);
+            return;
+        }
+
+        if(this.query) {
+            this.setLockedSearch(false, "Search for message");
+            this.simulateSearch(this.query);
             return;
         }
 
         let messages = this.buses[this.arch][this.network + "." + this.bus];
 
-        this.setLockedSearch(false, "Search for message");
-
         if (!this.message) {
+            this.setLockedSearch(false, "Search for message");
             this.renderMessageSelector(messages, this.arch, this.network, this.bus);
             return;
         }
 
+        this.setLockedSearch(false, "Search for message");
         this.renderMessageInfo(messages[this.message.replaceAll("0x", "")], this.arch, this.network, this.bus, this.message);
     }
 
@@ -230,6 +238,7 @@ export default class Buses extends Shared {
     }
 
     async onSearch(query) {
+        super.onSearch(query);
         requestJSONWithBody("POST", "/api/v1/buses/search",
             {
                 query,

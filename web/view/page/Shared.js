@@ -20,10 +20,34 @@ export default class {
         history.pushState(null, null, url);
     }
 
+    replaceCurrentPushedLink(url) {
+        history.replaceState({}, "", url);
+    }
+
     redirectToLink(url) {
         this.pushLink(url);
-        // call router
+
         this.onRedirect();
+    }
+
+    setURLParameter(parameter, value) {
+        if (!this.urlParams.has(parameter))
+            this.urlParams.append(parameter, value);
+        else
+            this.urlParams.set(parameter, value);
+
+        const newURL = location.origin + location.pathname + `?${this.urlParams.toString()}`;
+        this.replaceCurrentPushedLink(newURL);
+    }
+
+    removeURLParameter(parameter) {
+        if (!this.urlParams.has(parameter))
+            return;
+
+        this.urlParams.delete(parameter);
+
+        const newURL = location.origin + location.pathname + `?${this.urlParams.toString()}`;
+        this.replaceCurrentPushedLink(newURL);
     }
 
     onRedirect() {
@@ -35,6 +59,7 @@ export default class {
     setLockedSearch(state, msg) {
         if (state)
             this.search.value = "";
+
         this.search.disabled = state;
         this.search.placeholder = msg;
     }
@@ -148,18 +173,36 @@ export default class {
     async render() { }
 
     async init() {
-        this.search.addEventListener("keyup", () => {
-
-            if (this.search.value.length < 1) {
-                this.onRedirect();
-                return;
-            }
-
-            this.onSearch(this.search.value);
-        })
+        this.search.value = "";
     }
 
-    async onSearch(query) { }
+    async handleKeyUpEvent(event) {
+        if (this.search.value == this.lastSearch)
+            return;
+
+        this.lastSearch = this.search.value;
+
+        if (this.search.value.length < 1) {
+            this.onEndSearch();
+            return;
+        }
+
+        this.onSearch(this.search.value);
+    }
+
+    async onSearch(query) {
+        this.setURLParameter("query", query);
+    }
+
+    async onEndSearch() {
+        this.removeURLParameter("query");
+        this.onRedirect();
+    }
+
+    async simulateSearch(query) {
+        this.search.value = query;
+        this.onSearch(query);
+    }
 
     setRenderingDetails = (content) => this.renderingDetails.innerHTML = content;
 

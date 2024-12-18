@@ -100,7 +100,7 @@ export default class Nodes extends Shared {
             const network = splitName[0];
             const busName = splitName[1];
 
-            this.addTreeField(" -> ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${busName}">${bus}</a>`, 1);
+            this.addTreeField(" -> ", `<a class="fieldLink" href="/buses?arch=${nodeArch}&network=${network}&bus=${busName}">${bus}</a>  (<a class="fieldLink" href="/nodes?arch=${nodeArch}&query=${bus}">other nodes</a>)`, 1);
         }
 
         if (node.id)
@@ -160,6 +160,7 @@ export default class Nodes extends Shared {
 
 
     async render() {
+        this.query = this.urlParams.get("query");
         this.nodeParam = this.urlParams.get("node");
         this.archParam = this.urlParams.get("arch");
 
@@ -170,13 +171,20 @@ export default class Nodes extends Shared {
             return;
         }
 
-        this.setLockedSearch(false, "Search for nodes ...");
+        if (this.query) {
+            this.setLockedSearch(false, "Search for message");
+            this.simulateSearch(this.query);
+            return;
+        }
 
         if (!this.nodeParam) {
+            this.setLockedSearch(false, "Search for nodes ...");
             // Show node select
             requestJSON("GET", "/api/v1/nodes/" + this.archParam).then((a) => this.renderNodeSelector(a, this.archParam));
             return;
         }
+
+        this.setLockedSearch(false, "Search for nodes ...");
 
         // show node
         requestJSON("GET", "/api/v1/nodes/" + this.archParam).then((a) => this.renderNodeInfo(a, this.nodeParam, this.archParam));
@@ -201,10 +209,11 @@ export default class Nodes extends Shared {
     }
 
     async onSearch(query) {
-        if(!this.archParam) {
-            this.onRedirect();
+        if (!this.archParam) {
             return;
         }
+
+        super.onSearch(query);
 
         requestJSONWithBody("POST", "/api/v1/node/" + this.archParam + "/search", {
             query,
