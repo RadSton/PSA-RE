@@ -38,15 +38,18 @@ body {
 }
 
 .logo {
-    margin: 0 auto 0 10px;
+    margin: auto 0 auto 0;
+    text-align: center;
+    max-width: 170px;
 }
 
 .dbmuxevselection>a {
-    margin: 0 2vw;
+    margin: 0 1vw;
     font-size: 12pt;
     text-decoration: none;
     color: var(--text-color);
     opacity: 0.7;
+    white-space: nowrap;
 }
 
 .dbmuxevselection>a:hover {
@@ -116,7 +119,7 @@ break {
 }
 
 .searchResult {
-    margin: 20px;
+    margin: 20px 0px;
     padding: 20px;
     border-radius: 10px;
     min-height: 75px;
@@ -142,7 +145,7 @@ break {
 .searchResultInfo {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
@@ -150,6 +153,10 @@ break {
         "searchResultCodes"
         "searchResultCodesName";
     grid-area: searchResultInfo;
+}
+
+.searchResultInfo>span {
+    margin-bottom: 10px;
 }
 
 .searchResultName {
@@ -190,6 +197,10 @@ break {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #3e3e3e;
+}
+
+::-webkit-scrollbar-corner {
+    background: #00000000;
 }
 
 .selTitle {
@@ -265,4 +276,40 @@ break {
     text-decoration: underline;
     font-weight: 800;
     color: #ffae43;
+}
+
+@media only screen and (max-width: 700px) {
+    .selTitle {
+        font-size: 20pt;
+    }
+
+    .selectedInfo>.field {
+        font-size: 16pt;
+    }
+
+    .fieldTitle {
+        font-size: 20pt;
+    }
+
+    .logotext {
+        font-size: 14pt;
+    }
+}
+
+@media only screen and (max-width: 501px) {
+    .selTitle {
+        font-size: 16pt;
+    }
+
+    .selectedInfo>.field {
+        font-size: 13pt;
+    }
+
+    .fieldTitle {
+        font-size: 16pt;
+    }
+
+    .logotext {
+        font-size: 10pt;
+    }
 }
