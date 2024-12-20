@@ -63,7 +63,9 @@ export default class Buses extends Shared {
 
         let result = "";
 
-        for (const [message, data] of Object.entries(messages)) {
+        for (const message of this.sortHexKeyArray(Object.keys(messages))) {
+            const data = messages[message];
+
             const name = data.name ? "Name: " + data.name : "";
             const comment = data.comment ? "Comment: " + data.comment[this.defaultLang] : "";
             const signals = data.signals ? "Signals: " + Object.keys(data.signals).join(", ") : "";

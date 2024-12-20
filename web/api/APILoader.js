@@ -8,10 +8,8 @@ module.exports.load = (app, configuration, dbmuxev, dbmuxevLibrary) => {
 
     let options = {};
 
-    for(const key of OPTIONS_TO_EXPOSE) {
-        console.log(key, configuration[key])
+    for(const key of OPTIONS_TO_EXPOSE) 
         options[key] = configuration[key];
-    }
     
     app.get("/api/config", (req, res) => {
         res.send(options);

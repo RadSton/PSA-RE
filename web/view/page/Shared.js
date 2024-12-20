@@ -204,6 +204,12 @@ export default class {
         this.onSearch(query);
     }
 
+    sortHexKeyArray(array = []) {
+        return array.sort((a, b) => {
+            return parseInt(a, 16) - parseInt(b, 16)
+        })
+    }
+
     setRenderingDetails = (content) => this.renderingDetails.innerHTML = content;
 
 }
