@@ -1,0 +1,7 @@
+id: 0x10D
+name: ABS_ECU_VERSION
+
+senders:
+  - ABS
+
+template: ECU_VERSION # Found at ./templates/ECU_VERSION.yml

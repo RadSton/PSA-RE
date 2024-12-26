@@ -1,0 +1,7 @@
+id: 0x108
+name: CMM_ECU_VERSION
+
+senders:
+  - CMM
+
+template: ECU_VERSION # Found at ./templates/ECU_VERSION.yml

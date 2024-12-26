@@ -1,0 +1,52 @@
+length: 8
+type: 'can'
+periodicity: 'trigger'
+comment:
+  en: Frame for identifying a ecu on the bus.
+  fr: Cadre pour identifier un ECU sur le bus.
+  de: Frame für die Identifikation eines Steuergerätes auf einem Bus.
+
+senders:
+ - BSI
+
+receivers: 
+ - BSI 
+
+signals:
+  ECU_IDENTIFICATION_NUMBER:
+    bits: '1.7-1.0'
+    type: uint
+  SOFTWARE_VERSION_DAY:
+    bits: '2.7-2.0'
+    type: uint
+    comment: 
+      en: Days of the software creation date (DD.MM.YY)
+      fr: Jours de la date de création du logiciel (JJ.MM.AA)
+      de: Tage des Softwareerstellungs-Datum (DD.MM.JJ)
+  SOFTWARE_VERSION_MONTH:
+    bits: '3.7-3.0'
+    type: uint
+    comment: 
+      en: Month of the software creation date (DD.MM.YY)
+      fr: Mois de la date de création du logiciel (JJ.MM.AA)
+      de: Monate des Softwareerstellungs-Datum (DD.MM.JJ)
+  SOFTWARE_VERSION_YEAR:
+    bits: '4.7-4.0'
+    type: uint
+    comment: 
+      en: Years of the software creation date (DD.MM.YY)
+      fr: Années de la date de création du logiciel (JJ.MM.AA)
+      de: Jahre des Softwareerstellungs-Datum (DD.MM.JJ)
+  SOFTWARE_NUMBER:
+    bits: '5.7-6.0'
+    type: uint
+  GENERATION_NUMBER:
+    bits: '7.7-7.0'
+    type: uint
+    comment:
+      en: This value consists of two parts and is split in the middle (7.7-7.4 ; 7.3-7.0)
+      fr: Cette valeur se compose de deux parties et est divisée au milieu (7,7-7,4 ; 7,3-7,0)
+      de: Diese Nummer besteht aus zwei Teilen und ist deshalb in der Mitte gespalten (7.7-7.4 ; 7.3-7.0)
+  SOFTWARE_EDITION:
+    bits: '8.7-8.0'
+    type: uint

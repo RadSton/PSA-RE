@@ -1,0 +1,7 @@
+id: 0x115
+name: DAE_ECU_VERSION
+
+senders:
+  - DAE
+
+template: ECU_VERSION # Found at ./templates/ECU_VERSION.yml
